@@ -1,14 +1,14 @@
 # GitHub Action for Caching a Docker Image
 
-GitHub Action implementation for building a docker image. 
+GitHub Action implementation for building a docker image.
 
 ## Usage
 
 Use with [GitHub Actions](https://github.com/features/actions)
 
-_.github/workflows/CI.yml_
+Example: _.github/workflows/CI.yml_
 
-```
+```yaml
 name: "CI"
 on:
   push:
@@ -33,24 +33,24 @@ jobs:
 
 Mandatory argument:
 
-```
+```yaml
 image_name: "<your image name>"
 github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 Option input values (and defaults):
 
-```
+```yaml
 dockerfile: "Dockerfile"
 registry: "docker.pkg.github.com/$GITHUB_REPOSITORY"
 ```
 
 ## See it in practice
 
-You can find a working and not working PR here:
-https://github.com/MasterOfMalt/Atom.StatusDashboard/pulls
+You can find a working and not working PR [here](https://github.com/MasterOfMalt/Atom.StatusDashboard/pulls)
 
 ## Refs
-The following external action are referenced in this action:
 
-https://github.com/docker/login-action
+The following external actions are referenced in this action:
+
+[login-action](https://github.com/docker/login-action)

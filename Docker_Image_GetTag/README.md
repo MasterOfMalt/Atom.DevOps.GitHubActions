@@ -1,14 +1,15 @@
 # GitHub Action for Determining a docker image tag
 
-GitHub Action implementation for determining the docker image tag from github repo properties.
+GitHub Action implementation for determining the docker image tag from github repo
+properties.
 
 ## Usage
 
 Use with [GitHub Actions](https://github.com/features/actions)
 
-_.github/workflows/CI.yml_
+Example: _.github/workflows/CI.yml_
 
-```
+```yaml
 name: "CI"
 on:
   push:
@@ -32,5 +33,4 @@ jobs:
 
 ## See it in practice
 
-You can find a working and not working PR here:
-https://github.com/MasterOfMalt/Atom.StatusDashboard/pulls
+You can find a working and not working PR [here](https://github.com/MasterOfMalt/Atom.StatusDashboard/pulls)

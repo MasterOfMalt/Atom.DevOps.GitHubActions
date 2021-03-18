@@ -1,3 +1,4 @@
+---
 name: "Docker Image Cache"
 description: "Pulls a docker image cache for the given image:tag."
 
@@ -5,18 +6,18 @@ inputs:
   image_name:
     description: "Docker image name to pull"
     required: true
-  tag_name: "Docker image tag to pull"
-    description:
+  tag_name:
+    description: "Docker image tag to pull"
     required: false
     default: "latest"
-  registry: # registry containing the container image
-    description: "docker registry for container image (must me all lover case and end in '/')"
+  registry: # registry containing the image
+    description: "docker registry for image (all lower case, end in '/')"
     required: false
     default: "docker.pkg.github.com/$GITHUB_REPOSITORY"
   expiry: # Number of days to keep cache
     description: "Number of days before the cache is rebuilt"
     required: false
-    default: 3
+    default: "3"
 
 outputs:
   setting:
@@ -26,26 +27,31 @@ outputs:
 runs:
   using: "composite"
   steps:
-      ## Pulling the previous image allows us to use its layers as a cache, to reduce build times.
+      ## Pulling the previous image permits use of its layers as a cache.
+      ## This can reduce build times.
     - name: Pull a previous image (if any)
       id: pull_image
       ## When pulling an image - we try the current tag name first,
       ## failing that, we try the latest.
       ## if there's nothing to pull - there is no cache.
       shell: bash
+      env:
+        IMAGE_NAME: ${{ inputs.registry }}${{ inputs.image_name }}
       run: |
-        (docker pull ${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }} && \
+        (docker pull ${IMAGE_NAME}:${{ inputs.tag_name }} && \
           echo "::set-output name=cache::${{ inputs.tag_name }}") \
         || \
-        (docker pull ${{ inputs.registry }}${{ inputs.image_name }}:latest && \
+        (docker pull ${IMAGE_NAME}:latest && \
           echo "::set-output name=cache::latest") \
         || \
         true
 
-      ## Caching image layers is good - it saves build time, reduces storage and network usage. 
-      ## However, we don't want to cache forever. For the pip packages that aren't pinned, 
-      ## we want it to fetch fresh ones regularly. Currently that is 3 days.
-      ## We avoid pinning unless necessary, so we don't end up dependant on ancient versions or afraid to update.
+      ## Caching image layers is good - it saves build time, reduces storage
+      ## and network usage. However, we don't want to cache forever. For the
+      ## pip packages that aren't pinned, we want it to fetch fresh ones
+      ## regularly. Currently that is 3 days. We avoid pinning unless
+      ## necessary, so we don't end up dependant on ancient versions or
+      ## afraid to update.
     - name: Prepare cache setting
       id: cache
       env:
