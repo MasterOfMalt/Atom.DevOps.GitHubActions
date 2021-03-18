@@ -1,0 +1,47 @@
+name: 'Docker Build Images'
+description: 'Promote a branch to a release branch'
+
+inputs:
+  dockerfile:  # Name of dockerfile to build
+    description: 'Dockerfile to build'
+    required: false
+    default: 'Dockerfile'
+  image_name: # Name of image to build.
+    description: 'Docker image name (without registry or tag)'
+    required: true
+  registry: # registry containing the container image
+    description: 'docker registry for container image (must me all lover case and end in "/")'
+    required: false
+    default: 'docker.pkg.github.com/$GITHUB_REPOSITORY'
+  github_token: # secret github token
+    description: "github token eg. ${{ secrets.GITHUB_TOKEN }}"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Login to registry
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ github.actor }}
+        password: ${{ inputs.github_token }}
+
+    - name: Determine tag
+      id: get_tag
+      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_GetTag@v1
+
+    ## Pulling the previous image allows us to use its layers as a cache, to reduce build times.
+    - name: Pull cache layers (if any)
+      id: cache
+      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_Cache@v1
+      with:
+        image_name: ${{ inputs.image_name }}
+        tag_name: ${{ steps.get_tag.outputs.tag_name }}
+        registry: ${{ inputs.registry }}
+
+    - name: Build container image (no buildkit)
+      run: |
+        docker build . -f "${{ inputs.image_name }}.Dockerfile" \
+          -t "${{ inputs.registry ))${{ inputs.image_name }}:${{ steps.get_tag.outputs.tag_name }}" \
+          "${{ steps.cache.outputs.setting }}"

@@ -1,0 +1,77 @@
+name: "Promote Branch"
+description: "Promote a branch to a release branch"
+
+inputs:
+  from_branch:  # name of from_branch branch
+    description: "branch to promote"
+    required: false
+    default: "devel" # Should this be master,main
+  release_branch:  # name of release branch
+    description: "branch to promote/merge to"
+    required: false
+    default: "main"
+  tag_prefix: # Git tag prefix
+    description: "Any prefix for the tag bump"
+    required: false
+    default: ""
+  github_token: # secret github token
+    description: "github token eg. ${{ secrets.GITHUB_TOKEN }}"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Merge to master
+      uses: devmasx/merge-branch@v1.3.1
+      with:
+        type: now
+        from_branch: ${{ inputs.from_branch }}
+        target_branch: ${{ inputs.release_branch }}
+        github_token: ${{ inputs.github_token }}
+
+      - name: Detect or add patch version
+        id: normalise_tag
+        run: |
+          PREV_TAG=$(git ls-remote --refs --sort='version:refname' --tags origin | \
+                     tail -n1 | \
+                     cut -d'/' -f3)
+          echo "prev_tag=${PREV_TAG}"
+          DOT_COUNT=$(echo ${PREV_TAG} | tr -cd '.' | wc -c)
+          case $DOT_COUNT in
+            0)
+              echo "::set-output name=new_tag::${PREV_TAG}.0.0"
+              ;;
+            1)
+              echo "::set-output name=new_tag::${PREV_TAG}.0"
+              ;;
+          esac
+
+      - name: Normalise tag to semantic-release
+        if: |
+          env.ACT != 'true' &&
+          steps.normalise_tag.outputs.new_tag != ''
+        uses: mathieudutour/github-tag-action@v5.3
+        with:
+          release_branches: master,main
+          custom_tag: ${{ steps.normalise_tag.outputs.new_tag }}
+          tag_prefix: ''
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump version and push tag
+        if: env.ACT != 'true'
+        id: version_bump
+        uses: mathieudutour/github-tag-action@v5.3
+        with:
+          release_branches: master,main
+          tag_prefix: ''
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+# TODO: How should we handle create releases?
+#      - name: Create a GitHub release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+#          release_name: Release ${{ steps.tag_version.outputs.new_tag }}
+#          body: ${{ steps.tag_version.outputs.changelog }}
