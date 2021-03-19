@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
-set -x
-env
 
 GITHUB_REF=${GITHUB_REF:-""}
 GITHUB_HEAD_REF=${GITHUB_HEAD_REF:-""}
