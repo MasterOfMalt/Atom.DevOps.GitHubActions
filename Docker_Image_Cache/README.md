@@ -45,8 +45,15 @@ image_name: "<your image name>"
 Option input values (and defaults):
 
 ```yaml
-tag_name: "latest"
+tag: "latest"
 registry: "docker.pkg.github.com/$GITHUB_REPOSITORY"
+```
+
+Outputs:
+
+```yaml
+setting: "Docker Cache setting for use in docker build."
+cache_tag: "Docker tag of the cached image"
 ```
 
 ## See it in practice

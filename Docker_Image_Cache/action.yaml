@@ -11,7 +11,8 @@ inputs:
     required: false
     default: "latest"
   registry: # registry containing the image
-    description: "docker registry for image (all lower case, end in '/')"
+    description: "docker registry for image (all lower case, end in '/')
+                  for registry.hub.docker.com used a blank string"
     required: false
     default: "docker.pkg.github.com/$GITHUB_REPOSITORY"
   expiry: # Number of days to keep cache
@@ -23,48 +24,18 @@ outputs:
   setting:
     description: "Docker Cache setting for use in docker build."
     value: ${{ steps.cache.outputs.setting }}
+  cache_tag:
+    description: "Docker tag of the cached image"
+    value: ${{ steps.cache.outputs.cache_tag }}
 
 runs:
   using: "composite"
   steps:
-      ## Pulling the previous image permits use of its layers as a cache.
-      ## This can reduce build times.
-    - name: Pull a previous image (if any)
-      id: pull_image
-      ## When pulling an image - we try the current tag name first,
-      ## failing that, we try the latest.
-      ## if there's nothing to pull - there is no cache.
-      shell: bash
-      env:
-        IMAGE_NAME: ${{ inputs.registry }}${{ inputs.image_name }}
-      run: |
-        (docker pull ${IMAGE_NAME}:${{ inputs.tag_name }} && \
-          echo "::set-output name=cache::${{ inputs.tag_name }}") \
-        || \
-        (docker pull ${IMAGE_NAME}:latest && \
-          echo "::set-output name=cache::latest") \
-        || \
-        true
-
-      ## Caching image layers is good - it saves build time, reduces storage
-      ## and network usage. However, we don't want to cache forever. For the
-      ## pip packages that aren't pinned, we want it to fetch fresh ones
-      ## regularly. Currently that is 3 days. We avoid pinning unless
-      ## necessary, so we don't end up dependant on ancient versions or
-      ## afraid to update.
-    - name: Prepare cache setting
+    - name: Pull cache layers (if any)
       id: cache
-      env:
-        IMAGE_FULL_NAME: ${{ inputs.registry }}${{ inputs.image_name }}:${{ steps.pull_image.outputs.cache }}
       shell: bash
       run: |
-        EXPIRY_TIME_IN_SECS=$(( ${{ inputs.expiry }} * 24 * 60 * 60 ))
-        layer_date=$( docker image history "${IMAGE_FULL_NAME}" \
-                          --format "{{.CreatedAt}}#{{.CreatedBy}}" \
-                          --no-trunc | grep requirements | cut -d'#' -f1 )
-        layer_age=$(( $(date +%s) - $(date +%s -d  "$layer_date") ))
-        if [ $layer_age -gt $EXPIRY_TIME_IN_SECS ]; then
-          echo "::set-output name=setting::--no-cache"
-        else
-          echo "::set-output name=setting::--cache-from=${IMAGE_FULL_NAME}"
-        fi
+        export EXPIRY_TIME_IN_DAYS=${{ inputs.expiry }}
+        ./Docker_Image_Cache/prepare_container_image_cache.sh \
+          "${{ inputs.registry }}${{ inputs.image_name }}" \
+          "${{ inputs.tag_name }}"
