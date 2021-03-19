@@ -31,6 +31,12 @@ jobs:
       run: echo "tag=${{ steps.get_tag.outputs.tag_name }}"
 ```
 
+Outputs:
+
+```yaml
+tag_name: "tag to use for the docker image"
+```
+
 ## See it in practice
 
 You can find a working and not working PR [here](https://github.com/MasterOfMalt/Atom.StatusDashboard/pulls)
