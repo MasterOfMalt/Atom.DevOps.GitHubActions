@@ -8,10 +8,5 @@ outputs:
     value: ${{ steps.get_tag.outputs.tag_name }}
 
 runs:
-  using: "composite"
-  steps:
-    - name: Determine tag
-      id: get_tag
-      shell: bash
-      run: |
-        ./Docker_Image_GetTag/get_git_tag.sh
+  using: 'docker'
+  image: 'Dockerfile'
