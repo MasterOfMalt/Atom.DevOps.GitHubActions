@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -eu -o pipefail
 
 # This will pull a docker image to build from if available,
@@ -9,7 +10,9 @@ set -eu -o pipefail
 # Outputs:
 #   stdout:     The github workflow instructions to set a variable. Github workflow atuomatically responds to these.
 
-EXPIRY_TIME_IN_DAYS=${EXPIRY_TIME_IN_DAYS:-3}
+IMAGE_NAME=${1:-""}
+TAG_NAME=${2:-""}
+EXPIRY_TIME_IN_DAYS=${3:-3}
 EXPIRY_TIME_IN_SECS=$(( EXPIRY_TIME_IN_DAYS * 24 * 60 * 60 )) # 3 days.
 echo "EXPIRY_TIME_IN_SECS=${EXPIRY_TIME_IN_SECS}"
 
@@ -29,6 +32,11 @@ function prepare_cache_setting() {
     fi
     image_layers=$( docker image history "${image_full_name}" \
                     --format "{{.CreatedAt}}#{{.CreatedBy}}" --no-trunc)
+
+    # TODO: Make this more generic and less python orientated
+    if ! echo "$image_layers" | grep requirements; then
+        return 1
+    fi
     layer_date=$( echo "$image_layers" | grep requirements | cut -d'#' -f1 )
     layer_age=$(( $(date +%s) - $(date +%s -d  "$layer_date") ))
 
@@ -63,5 +71,11 @@ function main() {
     fi    
 }
 
+if [ "$IMAGE_NAME" == "" ]; then
+  echo "IMAGE_NAME not specified"; exit 1;
+fi
+if [ "$TAG_NAME" == "" ]; then
+  echo "TAG_NAME not specified"; exit 1;
+fi
 
-main "$1" "$2"
+main "$IMAGE_NAME" "$TAG_NAME"

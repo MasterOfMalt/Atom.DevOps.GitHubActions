@@ -24,18 +24,11 @@ outputs:
   setting:
     description: "Docker Cache setting for use in docker build."
     value: ${{ steps.cache.outputs.setting }}
-  cache_tag:
-    description: "Docker tag of the cached image"
-    value: ${{ steps.cache.outputs.cache_tag }}
 
 runs:
-  using: "composite"
-  steps:
-    - name: Pull cache layers (if any)
-      id: cache
-      shell: bash
-      run: |
-        export EXPIRY_TIME_IN_DAYS=${{ inputs.expiry }}
-        ./Docker_Image_Cache/prepare_container_image_cache.sh \
-          "${{ inputs.registry }}${{ inputs.image_name }}" \
-          "${{ inputs.tag_name }}"
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.registry }}${{ inputs.image_name }}
+    - ${{ inputs.tag_name }}
+    - ${{ inputs.expiry }}

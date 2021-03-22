@@ -53,7 +53,6 @@ Outputs:
 
 ```yaml
 setting: "Docker Cache setting for use in docker build."
-cache_tag: "Docker tag of the cached image"
 ```
 
 ## See it in practice
