@@ -22,12 +22,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Login to registry
+      uses: docker/login-action@v1
+      with:
+        registry: docker.pkg.github.com
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Build Image
       uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Build_Image@v1
       with:
         image_name: "dash"
         dockerfile: "Dockerfile"
-        registry: "docker.pkg.github.com/$GITHUB_REPOSITORY"
+        registry: "docker.pkg.github.com/${{ env.GITHUB_REPOSITORY }}/"
         github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 

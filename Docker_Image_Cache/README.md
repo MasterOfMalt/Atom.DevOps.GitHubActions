@@ -26,7 +26,14 @@ jobs:
     - name: Determine tag
       id: get_tag
       uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_Tag@v1
-    
+
+    - name: Login to registry
+      uses: docker/login-action@v1
+      with:
+        registry: docker.pkg.github.com
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+          
     - name: Pull cache layers (if any)
       id: cache
       uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_Cache@v1
