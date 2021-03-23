@@ -14,7 +14,7 @@ inputs:
     description: "docker registry for image (all lower case, end in '/')
                   for registry.hub.docker.com used a blank string"
     required: false
-    default: "docker.pkg.github.com/$GITHUB_REPOSITORY"
+    default: "docker.pkg.github.com/${{ env.GITHUB_REPOSITORY }}/"
   expiry: # Number of days to keep cache
     description: "Number of days before the cache is rebuilt"
     required: false
