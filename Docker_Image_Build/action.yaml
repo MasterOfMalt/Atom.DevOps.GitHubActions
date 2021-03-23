@@ -11,9 +11,10 @@ inputs:
     description: 'Docker image name (without registry or tag)'
     required: true
   registry: # registry containing the container image
-    description: 'docker registry for container image (must me all lover case and end in "/")'
+    description: 'docker registry for container image (must me all lover case
+                  and end in "/")'
     required: false
-    default: 'docker.pkg.github.com/$GITHUB_REPOSITORY'
+    default: "docker.pkg.github.com/${{ env.GITHUB_REPOSITORY }}/"
   github_token: # secret github token
     description: "github token eg. ${{ secrets.GITHUB_TOKEN }}"
     required: true
@@ -21,28 +22,38 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Login to registry
-      uses: docker/login-action@v1
-      with:
-        registry: ${{ inputs.registry }}
-        username: ${{ github.actor }}
-        password: ${{ inputs.github_token }}
+    ## Pulling the previous image allows us to use its layers as a cache, to
+    ## reduce build times.
+    - name: Debug
+      id: debug
+      if: env.ACT == 'true'
+      run: |
+        echo "###################################"
+        echo "Action Input:"
+        echo "---"
+        echo "dockerfile=${{ inputs.dockerfile }}"
+        echo "image_name=${{ inputs.image_name }}"
+        echo "registry=${{ inputs.registry }}"
+        echo "github_token=${{ inputs.github_token }}"
+        echo "---"
 
     - name: Determine tag
       id: get_tag
-      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_GetTag@v1
+      uses: ./Docker_Image_GetTag
 
-    ## Pulling the previous image allows us to use its layers as a cache, to reduce build times.
+    ## Pulling the previous image allows us to use its layers as a cache, to
+    ## reduce build times.
     - name: Pull cache layers (if any)
       id: cache
-      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_Cache@v1
+      uses: ./Docker_Image_Cache
       with:
         image_name: ${{ inputs.image_name }}
         tag_name: ${{ steps.get_tag.outputs.tag_name }}
         registry: ${{ inputs.registry }}
 
     - name: Build container image (no buildkit)
+      id: build
       run: |
-        docker build . -f "${{ inputs.image_name }}.Dockerfile" \
-          -t "${{ inputs.registry ))${{ inputs.image_name }}:${{ steps.get_tag.outputs.tag_name }}" \
+        echo docker build . -f "${{ inputs.dockerfile }}" \
+          -t "${{ inputs.registry }}/${{ inputs.image_name }}:${{ steps.get_tag.outputs.tag_name }}" \
           "${{ steps.cache.outputs.setting }}"
