@@ -23,6 +23,18 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Debug
+      id: debug
+      run: |
+        echo "###################################"
+        echo "Action Input:"
+        echo "---"
+        echo "from_branch=${{ inputs.from_branch }}"
+        echo "release_branch=${{ inputs.release_branch }}"
+        echo "tag_prefix=${{ inputs.tag_prefix }}"
+        echo "github_token=${{ inputs.github_token }}"
+        echo "---"
+
     - name: Login to registry
       id: login
       uses: docker/login-action@v1

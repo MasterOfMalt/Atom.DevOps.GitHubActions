@@ -29,6 +29,18 @@ runs:
   steps:
     ## Pulling the previous image allows us to use its layers as a cache, to
     ## reduce build times.
+    - name: Debug
+      id: debug
+      run: |
+        echo "###################################"
+        echo "Action Input:"
+        echo "---"
+        echo "dockerfile=${{ inputs.dockerfile }}"
+        echo "image_name=${{ inputs.image_name }}"
+        echo "registry=${{ inputs.registry }}"
+        echo "github_token=${{ inputs.github_token }}"
+        echo "---"
+
     - name: Determine tag
       id: get_tag
       uses: ./Docker_Image_GetTag

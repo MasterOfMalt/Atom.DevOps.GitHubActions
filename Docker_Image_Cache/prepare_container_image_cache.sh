@@ -14,7 +14,14 @@ IMAGE_NAME=${1:-""}
 TAG_NAME=${2:-""}
 EXPIRY_TIME_IN_DAYS=${3:-3}
 EXPIRY_TIME_IN_SECS=$(( EXPIRY_TIME_IN_DAYS * 24 * 60 * 60 )) # 3 days.
+
+echo "###################################"
+echo "Action Input:"
+echo "---"
+echo "IMAGE_NAME=${IMAGE_NAME}"
+echo "TAG_NAME=${TAG_NAME}"
 echo "EXPIRY_TIME_IN_SECS=${EXPIRY_TIME_IN_SECS}"
+echo "---"
 
 function prepare_cache_setting() {
     ## Caching image layers is good - it saves build time, reduces storage and network usage. 
