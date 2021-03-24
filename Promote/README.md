@@ -24,17 +24,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: MasterOfMalt/Atom.DevOps.GitHubActions/Promote@1.0
+      if: env.ACT != 'true'
       with:
         from_branch: "devel"
         release_branch: "main"
-        tag_prefix: ""
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-```
-
-Mandatory argument:
-
-```yaml
-github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 Option input values (and defaults):
@@ -43,6 +36,7 @@ Option input values (and defaults):
 from_branch: "devel"
 release_branch: "main"
 tag_prefix: ""
+github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## See it in practice
