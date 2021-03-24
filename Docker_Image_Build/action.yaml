@@ -14,10 +14,15 @@ inputs:
     description: 'docker registry for container image (must me all lover case
                   and end in "/")'
     required: false
-    default: "docker.pkg.github.com/${{ env.GITHUB_REPOSITORY }}/"
+    default: ""
   github_token: # secret github token
     description: "github token eg. ${{ secrets.GITHUB_TOKEN }}"
     required: true
+
+outputs:
+  image_name_tag:
+    description: "full image name and tag used for the docker image"
+    value: ${{ steps.name_tag.outputs.image_name_tag }}
 
 runs:
   using: "composite"
@@ -25,7 +30,6 @@ runs:
     ## Pulling the previous image allows us to use its layers as a cache, to
     ## reduce build times.
     - name: Debug
-      id: debug
       if: env.ACT == 'true'
       run: |
         echo "###################################"
@@ -51,9 +55,11 @@ runs:
         tag_name: ${{ steps.get_tag.outputs.tag_name }}
         registry: ${{ inputs.registry }}
 
+    - run: echo "::set-output name=image_name_tag::${{ inputs.registry }}${{ inputs.image_name }}:${{ steps.get_tag.outputs.tag_name }}"
+
     - name: Build container image (no buildkit)
-      id: build
       run: |
-        echo docker build . -f "${{ inputs.dockerfile }}" \
-          -t "${{ inputs.registry }}/${{ inputs.image_name }}:${{ steps.get_tag.outputs.tag_name }}" \
+        docker build . -f "${{ inputs.dockerfile }}" \
+          -t "${{ inputs.registry }}${{ inputs.image_name }}:${{ steps.get_tag.outputs.tag_name }}" \
           "${{ steps.cache.outputs.setting }}"
+

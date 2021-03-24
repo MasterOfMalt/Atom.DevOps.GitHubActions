@@ -51,7 +51,7 @@ function main() {
     ## failing that, we try the latest.
     ## if there's nothing to pull - there is no cache.
 
-    local image_name=$1
+    local image_name=${1,,} # Must be in lower case
     local image_tag=$2
     local image_full_name=""
 

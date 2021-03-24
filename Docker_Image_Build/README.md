@@ -34,7 +34,7 @@ jobs:
       with:
         image_name: "dash"
         dockerfile: "Dockerfile"
-        registry: "docker.pkg.github.com/${{ env.GITHUB_REPOSITORY }}/"
+        registry: docker.pkg.github.com/your_repository_in_lower_case/
         github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
@@ -49,7 +49,7 @@ Option input values (and defaults):
 
 ```yaml
 dockerfile: "Dockerfile"
-registry: "docker.pkg.github.com/$GITHUB_REPOSITORY"
+registry: "docker.pkg.github.com/your_repository_in_lower_case/"
 ```
 
 ## See it in practice

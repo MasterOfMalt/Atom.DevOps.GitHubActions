@@ -40,7 +40,7 @@ jobs:
       with:
         image_name: "dash"
         tag_name: ${{ steps.get_tag.outputs.tag_name }}
-        registry: "docker.pkg.github.com/$GITHUB_REPOSITORY"
+        registry: docker.pkg.github.com/your_repository_in_lower_case/
 ```
 
 Mandatory argument:
@@ -53,7 +53,7 @@ Option input values (and defaults):
 
 ```yaml
 tag: "latest"
-registry: "docker.pkg.github.com/$GITHUB_REPOSITORY"
+registry: "docker.pkg.github.com/your_repository_in_lower_case/"
 ```
 
 Outputs:
