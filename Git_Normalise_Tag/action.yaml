@@ -1,0 +1,55 @@
+---
+name: "Normalise the latest Git Tag."
+description: "Normalise the latest Git Tag to be a semantic-release format."
+
+inputs:
+  tag_prefix: # Git tag prefix
+    description: "Any prefix for the tag bump"
+    required: false
+    default: ""
+  github_token: # secret github token
+    description: "github token eg. ${{ secrets.GITHUB_TOKEN }}"
+    required: false
+    default: ${{ secrets.GITHUB_TOKEN }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Debug
+      id: debug
+      run: |
+        echo "###################################"
+        echo "Action Input:"
+        echo "---"
+        echo "tag_prefix=${{ inputs.tag_prefix }}"
+        echo "github_token=${{ inputs.github_token }}"
+        echo "---"
+
+    - name: Detect or add patch version
+      if: env.ACT != 'true'
+      id: normalise_tag
+      run: |
+        PREV_TAG=$(git ls-remote --refs --sort='version:refname' --tags origin | \
+                   tail -n1 | \
+                   cut -d'/' -f3)
+        echo "prev_tag=${PREV_TAG}"
+        DOT_COUNT=$(echo ${PREV_TAG} | tr -cd '.' | wc -c)
+        case $DOT_COUNT in
+          0)
+            echo "::set-output name=new_tag::${PREV_TAG}.0.0"
+            ;;
+          1)
+            echo "::set-output name=new_tag::${PREV_TAG}.0"
+            ;;
+        esac
+
+    - name: Normalise tag to semantic-release
+      if: |
+        env.ACT != 'true' &&
+        steps.normalise_tag.outputs.new_tag != ''
+      uses: mathieudutour/github-tag-action@v5.3
+      with:
+        release_branches: master,main
+        custom_tag: ${{ steps.normalise_tag.outputs.new_tag }}
+        tag_prefix: ''
+        github_token: ${{ inputs.github_token }}
