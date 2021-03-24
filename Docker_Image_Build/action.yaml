@@ -42,9 +42,6 @@ runs:
         echo "github_token=${{ inputs.github_token }}"
         echo "---"
 
-    - run: ls -l ${{ github.workspace }}
-    - run: ls -l ${{ github.action_path }}
-
     - name: Determine tag
       id: get_tag
       uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_GetTag@PLOPS-427_initial_draft
