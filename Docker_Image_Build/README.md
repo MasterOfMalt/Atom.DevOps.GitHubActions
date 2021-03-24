@@ -35,14 +35,12 @@ jobs:
         image_name: "dash"
         dockerfile: "Dockerfile"
         registry: docker.pkg.github.com/your_repository_in_lower_case/
-        github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 Mandatory argument:
 
 ```yaml
 image_name: "<your image name>"
-github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 Option input values (and defaults):
@@ -50,6 +48,7 @@ Option input values (and defaults):
 ```yaml
 dockerfile: "Dockerfile"
 registry: "docker.pkg.github.com/your_repository_in_lower_case/"
+github_token: "${{ secrets.GITHUB_TOKEN }}"
 ```
 
 ## See it in practice

@@ -17,7 +17,8 @@ inputs:
     default: ""
   github_token: # secret github token
     description: "github token eg. ${{ secrets.GITHUB_TOKEN }}"
-    required: true
+    required: false
+    default: ${{ secrets.GITHUB_TOKEN }}
 
 outputs:
   image_name_tag:
@@ -41,15 +42,18 @@ runs:
         echo "github_token=${{ inputs.github_token }}"
         echo "---"
 
+    - run: ls -l ${{ github.workspace }}
+    - run: ls -l ${{ github.action_path }}
+
     - name: Determine tag
       id: get_tag
-      uses: ./Docker_Image_GetTag
+      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_GetTag@PLOPS-427_initial_draft
 
     ## Pulling the previous image allows us to use its layers as a cache, to
     ## reduce build times.
     - name: Pull cache layers (if any)
       id: cache
-      uses: ./Docker_Image_Cache
+      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_Cache@PLOPS-427_initial_draft
       with:
         image_name: ${{ inputs.image_name }}
         tag_name: ${{ steps.get_tag.outputs.tag_name }}
