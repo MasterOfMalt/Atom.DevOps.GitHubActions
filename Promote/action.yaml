@@ -27,7 +27,7 @@ runs:
       id: debug
       run: |
         echo "###################################"
-        echo "Action Input:"
+        echo "Promote Inputs:"
         echo "---"
         echo "from_branch=${{ inputs.from_branch }}"
         echo "release_branch=${{ inputs.release_branch }}"

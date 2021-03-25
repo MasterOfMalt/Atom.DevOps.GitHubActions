@@ -34,7 +34,7 @@ runs:
       id: debug
       run: |
         echo "###################################"
-        echo "Action Input:"
+        echo "Docker_Image_Build Inputs:"
         echo "---"
         echo "dockerfile=${{ inputs.dockerfile }}"
         echo "image_name=${{ inputs.image_name }}"

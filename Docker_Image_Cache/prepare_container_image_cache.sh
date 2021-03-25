@@ -16,7 +16,7 @@ EXPIRY_TIME_IN_DAYS=${3:-3}
 EXPIRY_TIME_IN_SECS=$(( EXPIRY_TIME_IN_DAYS * 24 * 60 * 60 )) # 3 days.
 
 echo "###################################"
-echo "Action Input:"
+echo "Docker_Image_Cache Inputs:"
 echo "---"
 echo "IMAGE_NAME=${IMAGE_NAME}"
 echo "TAG_NAME=${TAG_NAME}"

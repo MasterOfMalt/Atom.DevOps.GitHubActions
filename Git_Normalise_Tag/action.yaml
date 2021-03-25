@@ -19,7 +19,7 @@ runs:
       id: debug
       run: |
         echo "###################################"
-        echo "Action Input:"
+        echo "Git_Normalise Inputs:"
         echo "---"
         echo "tag_prefix=${{ inputs.tag_prefix }}"
         echo "github_token=${{ inputs.github_token }}"
