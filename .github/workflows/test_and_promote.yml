@@ -1,0 +1,100 @@
+name: "CI"
+on:
+  push:
+    branches:
+      - master
+      - devel
+  pull_request:
+
+env:
+  REGISTRY: docker.pkg.github.com
+  IMAGE_REPO: docker.pkg.github.com/masterofmalt/momtheme/
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      ################################
+      # Run Linter against code base #
+      ################################
+      - name: Lint Code Base
+        uses: github/super-linter@v3
+        env:
+          VALIDATE_MARKDOWN: true
+          VALIDATE_YAML: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test:
+    name: "Test"
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - uses: actions/checkout@v2
+        id: checkout
+
+      - uses: ./Docker_Image_GetTag
+        id: get_tag
+
+      - name: Check Return Tag
+        if: steps.get_tag.outputs.tag_name == ''
+        run: exit 1
+
+      - name: Login to registry
+        id: login
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: ./Docker_Image_Cache
+        id: cache
+        with:
+          image_name: ubuntu
+          tag_name: latest
+          registry: ""
+
+      - name: Check Cache Outputs
+        if: steps.cache.outputs.setting == ''
+        run: exit 1
+
+      - uses: ./Docker_Image_Build
+        id: build
+        with:
+          dockerfile: ./.github/Dockerfile
+          image_name: test_image_name
+          registry: ${{ env.IMAGE_REPO }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check Image Build
+        env:
+          check_value: ${{ env.IMAGE_REPO }}test_image_name:${{ steps.get_tag.outputs.tag_name }}
+        if: steps.build.outputs.image_name_tag != env.check_value
+        run: |
+          exit 1
+
+
+  promote:
+    if: github.ref == 'refs/heads/devel'
+    name: "Promote"
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login to registry
+        id: login
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: ./Promote
+        id: promote
+        if: env.ACT != 'true'
+        with:
+          from_branch: devel
+          release_branch: main
