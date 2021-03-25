@@ -10,7 +10,13 @@ if [ "$GITHUB_HEAD_REF" != "" ]; then
 fi
 if [ "$REF" == 'refs/heads/master' ]
 then
-  echo "::set-output name=tag_name::latest"
+  tag_name="latest"
 else
-  echo "::set-output name=tag_name::$(basename "$REF")"
+  tag_name="$(basename "$REF")"
 fi
+echo "::set-output name=tag_name::${tag_name}"
+echo "###################################"
+echo "Docker_Image_GetTag Output:"
+echo "---"
+echo "tag_name: ${tag_name}"
+echo "---"
