@@ -21,8 +21,9 @@ pushing. This will help you assess if it will pass the checks.
 ~~First, install act. See the instruction here:~~
 ~~<https://github.com/nektos/act#installation>~~
 
-First, you'll need to build and install a special version of 'act' which supports composite actions.
-This can be done by checking out our fork and branch as follows:
+First, you'll need to build and install a special version of 'act' which
+supports composite actions. This can be done by checking out our fork and
+branch as follows:
 
 ```bash
 git clone git@github.com:MasterOfMalt/act.git
