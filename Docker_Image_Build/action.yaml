@@ -32,6 +32,7 @@ runs:
     ## reduce build times.
     - name: Debug
       id: debug
+      shell: bash
       run: |
         echo "###################################"
         echo "Docker_Image_Build Inputs:"
@@ -57,8 +58,10 @@ runs:
         registry: ${{ inputs.registry }}
 
     - run: echo "::set-output name=image_name_tag::${{ inputs.registry }}${{ inputs.image_name }}:${{ steps.get_tag.outputs.tag_name }}"
+      shell: bash
 
     - name: Build container image (no buildkit)
+      shell: bash
       run: |
         docker build . -f "${{ inputs.dockerfile }}" \
           -t "${{ inputs.registry }}${{ inputs.image_name }}:${{ steps.get_tag.outputs.tag_name }}" \

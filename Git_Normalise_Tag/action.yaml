@@ -17,6 +17,7 @@ runs:
   steps:
     - name: Debug
       id: debug
+      shell: bash
       run: |
         echo "###################################"
         echo "Git_Normalise Inputs:"
@@ -28,6 +29,7 @@ runs:
     - name: Detect or add patch version
       if: env.ACT != 'true'
       id: normalise_tag
+      shell: bash
       run: |
         PREV_TAG=$(git ls-remote --refs --sort='version:refname' --tags origin | \
                    tail -n1 | \

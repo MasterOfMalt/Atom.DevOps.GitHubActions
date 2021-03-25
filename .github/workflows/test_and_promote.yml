@@ -38,8 +38,10 @@ jobs:
         id: get_tag
 
       - name: Check Return Tag
-        if: steps.get_tag.outputs.tag_name == ''
-        run: exit 1
+        run: |
+          if [ "${{ steps.get_tag.outputs.tag_name }}" == "" ]; then
+            exit 1
+          fi
 
       - name: Login to registry
         id: login
@@ -57,8 +59,10 @@ jobs:
           registry: ""
 
       - name: Check Cache Outputs
-        if: steps.cache.outputs.setting == ''
-        run: exit 1
+        run: |
+          if [ "${{ steps.cache.outputs.setting }}" == "" ]; then
+            exit 1
+          fi
 
       - uses: ./Docker_Image_Build
         id: build
@@ -71,9 +75,10 @@ jobs:
       - name: Check Image Build
         env:
           check_value: ${{ env.IMAGE_REPO }}test_image_name:${{ steps.get_tag.outputs.tag_name }}
-        if: steps.build.outputs.image_name_tag != env.check_value
         run: |
-          exit 1
+          if [ "${{ steps.build.outputs.image_name_tag }}" != "${{ env.check_value }}" ]; then
+            exit 1
+          fi
 
 
   promote:
