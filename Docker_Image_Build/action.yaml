@@ -16,9 +16,8 @@ inputs:
     required: false
     default: ""
   github_token: # secret github token
-    description: "github token eg. ${{ secrets.GITHUB_TOKEN }}"
-    required: false
-    default: ${{ secrets.GITHUB_TOKEN }}
+    description: "github token"
+    required: true
 
 outputs:
   image_name_tag:

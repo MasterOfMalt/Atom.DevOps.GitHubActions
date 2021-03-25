@@ -16,8 +16,8 @@ inputs:
     required: false
     default: ""
   github_token: # secret github token
-    description: "github token eg."
-    required: ""
+    description: "github token"
+    required: true
 
 runs:
   using: "composite"
