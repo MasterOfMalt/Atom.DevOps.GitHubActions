@@ -59,7 +59,6 @@ runs:
     - name: Build container image (no buildkit)
       shell: bash
       run: |
-        set -x
         docker build . -f "${{ inputs.dockerfile }}" \
           -t "${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}" \
           "${{ inputs.cache_setting }}"
