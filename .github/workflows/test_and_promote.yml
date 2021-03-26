@@ -72,6 +72,7 @@ jobs:
           tag_name: ${{ steps.get_tag.outputs.tag_name }}
           registry: ${{ env.IMAGE_REPO }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          cache_setting: ${{ steps.cache.outputs.setting }}
 
       - name: Check Image Build
         env:

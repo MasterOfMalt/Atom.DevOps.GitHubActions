@@ -22,6 +22,10 @@ inputs:
   github_token: # secret github token
     description: "github token"
     required: true
+  setting:
+    description: "Docker Cache setting for use in docker build."
+    required: false
+    default: "--no-cache"
 
 outputs:
   image_name_tag:
@@ -53,6 +57,7 @@ runs:
     - name: Build container image (no buildkit)
       shell: bash
       run: |
+        set -x
         docker build . -f "${{ inputs.dockerfile }}" \
           -t "${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}" \
           "${{ steps.cache.outputs.setting }}"

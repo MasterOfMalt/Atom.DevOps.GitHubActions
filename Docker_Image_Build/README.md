@@ -47,8 +47,10 @@ Option input values (and defaults):
 
 ```yaml
 dockerfile: "Dockerfile"
+tag_name: "tag to use for the docker image"
 registry: "docker.pkg.github.com/your_repository_in_lower_case/"
 github_token: "${{ secrets.GITHUB_TOKEN }}"
+cache_setting: "Docker Cache setting for use in docker build."
 ```
 
 ## See it in practice
