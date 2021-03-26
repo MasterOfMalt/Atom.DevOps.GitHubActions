@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: docker.pkg.github.com
-  IMAGE_REPO: docker.pkg.github.com/masterofmalt/momtheme/
+  IMAGE_REPO: docker.pkg.github.com/masterofmalt/atom.devops.githubactions/
 
 jobs:
   lint:
@@ -82,6 +82,25 @@ jobs:
             exit 1
           fi
 
+      - name: push
+        if: env.ACT != 'true'
+        run: |
+          docker push "${IMAGE_REPO}test_image_name:${{ steps.get_tag.outputs.tag_name }}"
+
+      - uses: ./Docker_Image_SetTag
+        id: tag_image
+        if: env.ACT != 'true'
+        with:
+          image_name: test_image_name
+          new_tag_name: ${{ steps.get_tag.outputs.tag_name }}
+          registry: ${{ env.IMAGE_REPO }}
+
+      - name: Check Image Tag
+        if: env.ACT != 'true'
+        run: |
+          if ! docker images | grep "${{ steps.build.outputs.image_name_tag }}"
+            exit 1
+          fi
 
   promote:
     if: github.ref == 'refs/heads/devel'
@@ -103,7 +122,7 @@ jobs:
 
       - name: Normalise tag to semantic-release
         if: env.ACT != 'true'
-        uses: MasterOfMalt/Atom.DevOps.GitHubActions/Git_Normalise_Tag@PLOPS-427_initial_draft
+        uses: ./Git_Normalise_Tag
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 

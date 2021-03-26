@@ -1,6 +1,6 @@
 # GitHub Action for Caching a Docker Image
 
-GitHub Action implementation for pulling/updting a docker image cache to speed up
+GitHub Action implementation for pulling/updating a docker image cache to speed up
 builds.
 
 ## Usage
