@@ -22,7 +22,7 @@ inputs:
   github_token: # secret github token
     description: "github token"
     required: true
-  setting:
+  cache_setting:
     description: "Docker Cache setting for use in docker build."
     required: false
     default: "--no-cache"
@@ -49,6 +49,7 @@ runs:
         echo "tag_name=${{ inputs.tag_name }}"
         echo "registry=${{ inputs.registry }}"
         echo "github_token=${{ inputs.github_token }}"
+        echo "cache_setting=${{ inputs.cache_setting }}"
         echo "---"
 
     - run: echo "::set-output name=image_name_tag::${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}"
@@ -60,5 +61,5 @@ runs:
         set -x
         docker build . -f "${{ inputs.dockerfile }}" \
           -t "${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}" \
-          "${{ steps.cache.outputs.setting }}"
+          "${{ inputs.cache_setting }}"
 
