@@ -21,26 +21,26 @@ jobs:
     name: "Build Images"
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Determine tag
-      id: get_tag
-      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_Tag@v1
+      - name: Determine tag
+        id: get_tag
+        uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_Tag@v1
 
-    - name: Login to registry
-      uses: docker/login-action@v1
-      with:
-        registry: docker.pkg.github.com
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to registry
+        uses: docker/login-action@v1
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
           
-    - name: Pull cache layers (if any)
-      id: cache
-      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_Cache@v1
-      with:
-        image_name: "dash"
-        tag_name: ${{ steps.get_tag.outputs.tag_name }}
-        registry: docker.pkg.github.com/your_repository_in_lower_case/
+      - name: Pull cache layers (if any)
+        id: cache
+        uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_Cache@v1
+        with:
+          image_name: "dash"
+          tag_name: ${{ steps.get_tag.outputs.tag_name }}
+          registry: docker.pkg.github.com/your_repository_in_lower_case/
 ```
 
 Mandatory argument:

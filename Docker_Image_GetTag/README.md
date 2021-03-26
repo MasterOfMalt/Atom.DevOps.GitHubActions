@@ -21,14 +21,14 @@ jobs:
     name: "Build Images"
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Determine tag
-      id: get_tag
-      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_GetTag@v1
+      - name: Determine tag
+        id: get_tag
+        uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_GetTag@v1
 
-    - name: echo tag_name
-      run: echo "tag=${{ steps.get_tag.outputs.tag_name }}"
+      - name: echo tag_name
+        run: echo "tag=${{ steps.get_tag.outputs.tag_name }}"
 ```
 
 Outputs:

@@ -19,9 +19,6 @@ inputs:
                   and end in "/")'
     required: false
     default: ""
-  github_token: # secret github token
-    description: "github token"
-    required: true
   cache_setting:
     description: "Docker Cache setting for use in docker build."
     required: false
@@ -48,7 +45,6 @@ runs:
         echo "image_name=${{ inputs.image_name }}"
         echo "tag_name=${{ inputs.tag_name }}"
         echo "registry=${{ inputs.registry }}"
-        echo "github_token=${{ inputs.github_token }}"
         echo "cache_setting=${{ inputs.cache_setting }}"
         echo "---"
 

@@ -83,22 +83,29 @@ jobs:
           fi
 
       - name: push
-        if: env.ACT != 'true'
         run: |
+          # For this tests purpose we need to add the latest tag too. In the real world this
+          # is done during a devel merge by GetTag retrieving 'latest'
+          docker tag \
+            "${IMAGE_REPO}test_image_name:${{ steps.get_tag.outputs.tag_name }}" \
+            "${IMAGE_REPO}test_image_name:latest"
+          docker push "${IMAGE_REPO}test_image_name:latest"
           docker push "${IMAGE_REPO}test_image_name:${{ steps.get_tag.outputs.tag_name }}"
 
       - uses: ./Docker_Image_SetTag
         id: tag_image
-        if: env.ACT != 'true'
         with:
           image_name: test_image_name
           new_tag_name: ${{ steps.get_tag.outputs.tag_name }}
           registry: ${{ env.IMAGE_REPO }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check Image Tag
-        if: env.ACT != 'true'
         run: |
-          if ! docker images | grep "${{ steps.build.outputs.image_name_tag }}"
+          set -x
+          if ! docker images | \
+                grep "${IMAGE_REPO}test_image_name" | \
+                grep "${{ steps.get_tag.outputs.tag_name }}"; then
             exit 1
           fi
 

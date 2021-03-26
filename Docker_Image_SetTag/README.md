@@ -32,30 +32,14 @@ jobs:
           registry: docker.pkg.github.com
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-    
-      - name: Build Image
-        uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Build_Image@v1
-        with:
-          image_name: "<your_image_name>"
-          dockerfile: "Dockerfile"
-          registry: docker.pkg.github.com/your_repository_in_lower_case/
 
-      - name: push
-        if: |
-          github.ref == 'refs/heads/master' &&
-          github.event_name == 'push' &&
-          env.ACT != 'true'
-        run: |
-          docker push "docker.pkg.github.com/your_repository_in_lower_case/
-                       <your_image_name>:${{ steps.get_tag.outputs.tag_name }}"
-
-      - name: Tag Image
-        id: cache
-        uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_Cache@v1
+      - uses: ./Docker_Image_SetTag
+        id: tag_image
         with:
-          image_name: "<your_image_name>"
-          tag_name: ${{ steps.get_tag.outputs.tag_name }}
+          image_name: test_image_name
+          new_tag_name: "<your_new_tag_name>"
           registry: docker.pkg.github.com/your_repository_in_lower_case/
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 Mandatory argument:

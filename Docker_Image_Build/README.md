@@ -20,21 +20,21 @@ jobs:
     name: "Build Images"
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Login to registry
-      uses: docker/login-action@v1
-      with:
-        registry: docker.pkg.github.com
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to registry
+        uses: docker/login-action@v1
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build Image
-      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Build_Image@v1
-      with:
-        image_name: "dash"
-        dockerfile: "Dockerfile"
-        registry: docker.pkg.github.com/your_repository_in_lower_case/
+      - name: Build Image
+        uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Build_Image@v1
+        with:
+          image_name: "dash"
+          dockerfile: "Dockerfile"
+          registry: docker.pkg.github.com/your_repository_in_lower_case/
 ```
 
 Mandatory argument:
@@ -49,7 +49,6 @@ Option input values (and defaults):
 dockerfile: "Dockerfile"
 tag_name: "tag to use for the docker image"
 registry: "docker.pkg.github.com/your_repository_in_lower_case/"
-github_token: "${{ secrets.GITHUB_TOKEN }}"
 cache_setting: "Docker Cache setting for use in docker build."
 ```
 

@@ -14,10 +14,44 @@ inputs:
                   for registry.hub.docker.com used a blank string"
     required: false
     default: ""
+  github_token: # secret github token
+    description: "github token"
+    required: true
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.registry }}${{ inputs.image_name }}
-    - ${{ inputs.new_tag_name }}
+  using: 'composite'
+  steps:
+    - name: Debug
+      id: debug
+      shell: bash
+      run: |
+        echo "###################################"
+        echo "Docker_Image_Build Inputs:"
+        echo "---"
+        echo "image_name=${{ inputs.image_name }}"
+        echo "new_tag_name=${{ inputs.tag_name }}"
+        echo "registry=${{ inputs.registry }}"
+        echo "github_token=${{ inputs.github_token }}"
+        echo "---"
+
+    - name: login to docker
+      shell: bash
+      run: |
+        echo "${{ inputs.github_token }}" | docker login --password-stdin \
+          -u "${{ github.actor }}" "${{ inputs.registry }}"
+
+    - name: Pull latest cache layer
+      shell: bash
+      run: docker pull "${{ inputs.registry }}${{ inputs.image_name }}:latest"
+
+    - name: Retag container
+      shell: bash
+      run: |
+        docker tag \
+          "${{ inputs.registry }}${{ inputs.image_name }}:latest" \
+          "${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.new_tag_name }}"
+
+    - name: Push tagged container
+      shell: bash
+      run: |
+        docker push "${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.new_tag_name }}"
