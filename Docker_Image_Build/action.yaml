@@ -53,6 +53,7 @@ runs:
         echo "---"
 
     - run: echo "::set-output name=image_name_tag::${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}"
+      id: name_tag
       shell: bash
 
     - name: Build container image (no buildkit)
