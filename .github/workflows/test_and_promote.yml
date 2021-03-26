@@ -69,6 +69,7 @@ jobs:
         with:
           dockerfile: ./.github/Dockerfile
           image_name: test_image_name
+          tag_name: ${{ steps.get_tag.outputs.tag_name }}
           registry: ${{ env.IMAGE_REPO }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 

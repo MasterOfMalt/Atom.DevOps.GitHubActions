@@ -10,6 +10,10 @@ inputs:
   image_name: # Name of image to build.
     description: 'Docker image name (without registry or tag)'
     required: true
+  tag_name:
+    description: "Docker image tag to pull"
+    required: false
+    default: "latest"
   registry: # registry containing the container image
     description: 'docker registry for container image (must me all lover case
                   and end in "/")'
@@ -38,31 +42,18 @@ runs:
         echo "---"
         echo "dockerfile=${{ inputs.dockerfile }}"
         echo "image_name=${{ inputs.image_name }}"
+        echo "tag_name=${{ inputs.tag_name }}"
         echo "registry=${{ inputs.registry }}"
         echo "github_token=${{ inputs.github_token }}"
         echo "---"
 
-    - name: Determine tag
-      id: get_tag
-      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_GetTag@PLOPS-427_initial_draft
-
-    ## Pulling the previous image allows us to use its layers as a cache, to
-    ## reduce build times.
-    - name: Pull cache layers (if any)
-      id: cache
-      uses: MasterOfMalt/Atom.DevOps.GitHubActions/Docker_Image_Cache@PLOPS-427_initial_draft
-      with:
-        image_name: ${{ inputs.image_name }}
-        tag_name: ${{ steps.get_tag.outputs.tag_name }}
-        registry: ${{ inputs.registry }}
-
-    - run: echo "::set-output name=image_name_tag::${{ inputs.registry }}${{ inputs.image_name }}:${{ steps.get_tag.outputs.tag_name }}"
+    - run: echo "::set-output name=image_name_tag::${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}"
       shell: bash
 
     - name: Build container image (no buildkit)
       shell: bash
       run: |
         docker build . -f "${{ inputs.dockerfile }}" \
-          -t "${{ inputs.registry }}${{ inputs.image_name }}:${{ steps.get_tag.outputs.tag_name }}" \
+          -t "${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}" \
           "${{ steps.cache.outputs.setting }}"
 
