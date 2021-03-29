@@ -116,9 +116,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check Git Tag
-        if: env.ACT != 'true'
         run: |
-          if ! git tag | grep "${{ steps.normalise_tag.outputs.new_git_tag }}"; then
+          if [ "${{ steps.normalise_tag.outputs.new_git_tag }}" != "" ] &&
+            ! git tag | grep "${{ steps.normalise_tag.outputs.new_git_tag }}"; then
             exit 1
           fi
 
