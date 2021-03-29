@@ -1,6 +1,6 @@
 ---
 name: "Normalise the latest Git Tag."
-description: "Normalise the latest Git Tag to be a semantic-release format."
+description: "Normalise the latest Git Tag to be a semantic-version format."
 
 inputs:
   tag_prefix: # Git tag prefix
@@ -60,7 +60,7 @@ runs:
       shell: bash
       run: |
         if [ "${{ steps.normalise_tag.outputs.new_tag }}" != "" ]; then
-          git tag -a ${{ steps.normalise_tag.outputs.new_tag }} -m "Normalised to semantic-release format"
+          git tag -a ${{ steps.normalise_tag.outputs.new_tag }} -m "Normalised to semantic-version format"
           git push origin --tags
         fi
 

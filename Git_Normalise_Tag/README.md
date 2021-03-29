@@ -1,7 +1,7 @@
 # GitHub Action for Promoting a branch
 
 GitHub Action implementation for normalising the latest GitHub Tab to
-be of sematic-version form (eg. v1.2.1).
+be of semantic-version form (eg. v1.2.1).
 
 ## Usage
 
@@ -35,7 +35,7 @@ Mandatory argument:
 github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-Option input values (and defaults):
+Optional input values (and defaults):
 
 ```yaml
 tag_prefix: ""
