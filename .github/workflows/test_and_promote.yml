@@ -151,6 +151,6 @@ jobs:
         id: version_bump
         uses: mathieudutour/github-tag-action@v5.3
         with:
-          release_branches: master,main
+          release_branches: master,main,devel
           tag_prefix: ''
           github_token: ${{ secrets.GITHUB_TOKEN }}
