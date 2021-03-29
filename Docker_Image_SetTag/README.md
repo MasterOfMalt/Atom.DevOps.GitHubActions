@@ -47,6 +47,7 @@ Mandatory argument:
 ```yaml
 image_name: "<your image name>"
 new_tag_name: "<your_new_tag>"
+github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 Optional input values (and defaults):

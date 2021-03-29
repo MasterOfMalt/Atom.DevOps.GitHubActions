@@ -25,13 +25,20 @@ jobs:
       - uses: actions/checkout@v2
       - uses: MasterOfMalt/Atom.DevOps.GitHubActions/Git_Normalise_Tag@v1
         if: env.ACT != 'true'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Mandatory argument:
+
+```yaml
+github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 Option input values (and defaults):
 
 ```yaml
 tag_prefix: ""
-github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## See it in practice
