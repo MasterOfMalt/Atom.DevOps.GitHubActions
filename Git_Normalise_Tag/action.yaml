@@ -31,25 +31,31 @@ runs:
         echo "github_token=${{ inputs.github_token }}"
         echo "---"
 
+    - name: Fetch previous version
+      id: fetch_tag
+      shell: bash
+      run: |
+        set -x
+        PREV_TAG=$(git ls-remote --refs --sort='version:refname' --tags origin | \
+                   tail -n1 | \
+                   cut -d'/' -f3)
+
+        if [ "${PREV_TAG}" == "" ]; then
+          echo "::set-output name=prev_tag::${PREV_TAG}"
+        fi
+
     - name: Detect or add patch version
       id: normalise_tag
       shell: bash
       run: |
-        PREV_TAG=$(git ls-remote --refs --sort='version:refname' --tags origin | \
-                   tail -n1 | \
-                   cut -d'/' -f3)
-        echo "::set-output name=prev_tag::${PREV_TAG}"
-        if [ "${{ steps.normalise_tag.outputs.prev_tag }}" != "" ]; then
-          exit 0
-        fi
-
+        set -x
         DOT_COUNT=$(echo ${PREV_TAG} | tr -cd '.' | wc -c)
         case $DOT_COUNT in
           0)
-            echo "::set-output name=new_tag::${PREV_TAG}.0.0"
+            echo "::set-output name=new_tag::${{ steps.fetch_tag.outputs.new_tag }}.0.0"
             ;;
           1)
-            echo "::set-output name=new_tag::${PREV_TAG}.0"
+            echo "::set-output name=new_tag::${{ steps.fetch_tag.outputs.new_tag }}.0"
             ;;
           *)
             echo "Can't normalise this tag"
@@ -59,6 +65,7 @@ runs:
     - name: Push normalised tag
       shell: bash
       run: |
+        set -x
         if [ "${{ steps.normalise_tag.outputs.new_tag }}" != "" ]; then
           git tag -a ${{ steps.normalise_tag.outputs.new_tag }} -m "Normalised to semantic-release format"
           git push origin --tags
