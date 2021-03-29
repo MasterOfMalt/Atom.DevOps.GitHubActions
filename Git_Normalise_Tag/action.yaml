@@ -38,7 +38,8 @@ runs:
         PREV_TAG=$(git ls-remote --refs --sort='version:refname' --tags origin | \
                    tail -n1 | \
                    cut -d'/' -f3)
-        echo "prev_tag=${PREV_TAG}"
+        echo "::set-output name=prev_tag::${PREV_TAG}"
+
         DOT_COUNT=$(echo ${PREV_TAG} | tr -cd '.' | wc -c)
         case $DOT_COUNT in
           0)
@@ -55,6 +56,8 @@ runs:
     - name: Push normalised tag
       shell: bash
       run: |
-        git tag -a ${{ steps.normalise_tag.outputs.new_tag }} -m "Normalised to semantic-release format"
-        git push origin --tags
+        if [ "${{ steps.normalise_tag.outputs.prev_tag }}" != "" ]; then
+          git tag -a ${{ steps.normalise_tag.outputs.new_tag }} -m "Normalised to semantic-release format"
+          git push origin --tags
+        fi
 
