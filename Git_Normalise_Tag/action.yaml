@@ -55,6 +55,6 @@ runs:
     - name: Push normalised tag
       shell: bash
       run: |
-        git tag -l ${{ steps.normalise_tag.outputs.new_tag }} -a "Normalised to semantic-release format"
+        git tag ${{ steps.normalise_tag.outputs.new_tag }} -a "Normalised to semantic-release format"
         git push origin --tags
 
