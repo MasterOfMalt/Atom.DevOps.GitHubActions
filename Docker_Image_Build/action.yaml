@@ -3,7 +3,7 @@ name: 'Docker Build Images'
 description: 'Promote a branch to a release branch'
 
 inputs:
-  dockerfile:  # Name of dockerfile to build
+  dockerfile:  # Path of dockerfile to build
     description: 'Dockerfile to build'
     required: false
     default: 'Dockerfile'
