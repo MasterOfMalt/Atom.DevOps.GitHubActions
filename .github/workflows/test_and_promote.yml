@@ -102,10 +102,23 @@ jobs:
 
       - name: Check Image Tag
         run: |
-          set -x
           if ! docker images | \
                 grep "${IMAGE_REPO}test_image_name" | \
                 grep "${{ steps.get_tag.outputs.tag_name }}"; then
+            exit 1
+          fi
+
+      - name: Normalise tag to semantic-release
+        if: env.ACT != 'true'
+        uses: ./Git_Normalise_Tag
+        id: normalise_tag
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check Git Tag
+        if: env.ACT != 'true'
+        run: |
+          if ! git tag | grep "${{ steps.normalise_tag.outputs.new_git_tag }}"; then
             exit 1
           fi
 

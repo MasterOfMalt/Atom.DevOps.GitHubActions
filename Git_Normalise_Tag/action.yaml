@@ -12,6 +12,12 @@ inputs:
     required: false
     default: ${{ secrets.GITHUB_TOKEN }}
 
+outputs:
+  new_git_tag: # New git tag applied
+    description: "Normalised tag applied"
+    value: ${{ steps.normalise_tag.outputs.new_tag }}
+
+
 runs:
   using: "composite"
   steps:
@@ -27,7 +33,6 @@ runs:
         echo "---"
 
     - name: Detect or add patch version
-      if: env.ACT != 'true'
       id: normalise_tag
       shell: bash
       run: |
@@ -43,15 +48,14 @@ runs:
           1)
             echo "::set-output name=new_tag::${PREV_TAG}.0"
             ;;
+          *)
+            echo "Can't normalise this tag"
+            exit 1
         esac
 
-    - name: Normalise tag to semantic-release
-      if: |
-        env.ACT != 'true' &&
-        steps.normalise_tag.outputs.new_tag != ''
-      uses: mathieudutour/github-tag-action@v5.3
-      with:
-        release_branches: master,main
-        custom_tag: ${{ steps.normalise_tag.outputs.new_tag }}
-        tag_prefix: ''
-        github_token: ${{ inputs.github_token }}
+    - name: Push normalised tag
+      shell: bash
+      run: |
+        git tag -l ${{ steps.normalise_tag.outputs.new_tag }} -a "Normalised to semantic-release format"
+        git push origin --tags
+
