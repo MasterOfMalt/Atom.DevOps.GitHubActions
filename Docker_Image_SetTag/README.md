@@ -49,7 +49,7 @@ image_name: "<your image name>"
 new_tag_name: "<your_new_tag>"
 ```
 
-Option input values (and defaults):
+Optional input values (and defaults):
 
 ```yaml
 registry: "docker.pkg.github.com/your_repository_in_lower_case/"

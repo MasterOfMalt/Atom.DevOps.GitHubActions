@@ -49,7 +49,7 @@ Mandatory argument:
 image_name: "<your image name>"
 ```
 
-Option input values (and defaults):
+Optional input values (and defaults):
 
 ```yaml
 tag: "latest"
