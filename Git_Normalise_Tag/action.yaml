@@ -40,7 +40,7 @@ runs:
                    tail -n1 | \
                    cut -d'/' -f3)
 
-        if [ "${PREV_TAG}" == "" ]; then
+        if [ "${PREV_TAG}" != "" ]; then
           echo "::set-output name=prev_tag::${PREV_TAG}"
         fi
 
