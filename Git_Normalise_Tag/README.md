@@ -1,7 +1,7 @@
 # GitHub Action for Promoting a branch
 
 GitHub Action implementation for normalising the latest GitHub Tab to
-be of sematic-release form (eg. v1.2.1).
+be of sematic-version form (eg. v1.2.1).
 
 ## Usage
 
