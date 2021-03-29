@@ -1,0 +1,12 @@
+{
+  "pull_request": {
+    "repo": {
+      "owner": "masterofmalt",
+      "repo": "GitHubActions"
+    },
+    "ref": "devel",
+    "head": {
+      "ref": "devel"
+    }
+  }
+}

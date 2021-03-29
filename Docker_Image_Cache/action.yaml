@@ -1,0 +1,33 @@
+---
+name: "Docker Image Cache"
+description: "Pulls a docker image cache for the given image:tag."
+
+inputs:
+  image_name:
+    description: "Docker image name to pull"
+    required: true
+  tag_name:
+    description: "Docker image tag to pull"
+    required: false
+    default: "latest"
+  registry: # registry containing the image
+    description: "docker registry for image (all lower case, end in '/')
+                  for registry.hub.docker.com used a blank string"
+    required: false
+    default: ""
+  expiry: # Number of days to keep cache
+    description: "Number of days before the cache is rebuilt"
+    required: false
+    default: "3"
+
+outputs:
+  setting:
+    description: "Docker Cache setting for use in docker build."
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.registry }}${{ inputs.image_name }}
+    - ${{ inputs.tag_name }}
+    - ${{ inputs.expiry }}

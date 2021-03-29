@@ -1,0 +1,61 @@
+---
+name: 'Docker Build Images'
+description: 'Promote a branch to a release branch'
+
+inputs:
+  dockerfile:  # Path of dockerfile to build
+    description: 'Path to Dockerfile to build'
+    required: false
+    default: 'Dockerfile'
+  image_name: # Name of image to build.
+    description: 'Docker image name (without registry or tag)'
+    required: true
+  tag_name:
+    description: "Docker image tag to pull"
+    required: false
+    default: "latest"
+  registry: # registry containing the container image
+    description: 'docker registry for container image (must be all lower case
+                  and end in "/")'
+    required: false
+    default: ""
+  cache_setting:
+    description: "Docker Cache setting for use in docker build."
+    required: false
+    default: "--no-cache"
+
+outputs:
+  image_name_tag:
+    description: "full image name and tag used for the docker image"
+    value: ${{ steps.name_tag.outputs.image_name_tag }}
+
+runs:
+  using: "composite"
+  steps:
+    ## Pulling the previous image allows us to use its layers as a cache, to
+    ## reduce build times.
+    - name: Debug
+      id: debug
+      shell: bash
+      run: |
+        echo "###################################"
+        echo "Docker_Image_Build Inputs:"
+        echo "---"
+        echo "dockerfile=${{ inputs.dockerfile }}"
+        echo "image_name=${{ inputs.image_name }}"
+        echo "tag_name=${{ inputs.tag_name }}"
+        echo "registry=${{ inputs.registry }}"
+        echo "cache_setting=${{ inputs.cache_setting }}"
+        echo "---"
+
+    - run: echo "::set-output name=image_name_tag::${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}"
+      id: name_tag
+      shell: bash
+
+    - name: Build container image (no buildkit)
+      shell: bash
+      run: |
+        docker build . -f "${{ inputs.dockerfile }}" \
+          -t "${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}" \
+          "${{ inputs.cache_setting }}"
+

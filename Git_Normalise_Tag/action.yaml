@@ -1,0 +1,66 @@
+---
+name: "Normalise the latest Git Tag."
+description: "Normalise the latest Git Tag to be a semantic-version format."
+
+inputs:
+  tag_prefix: # Git tag prefix
+    description: "Any prefix for the tag bump"
+    required: false
+    default: ""
+  github_token: # secret github token
+    description: "github token"
+    required: true
+
+outputs:
+  new_git_tag: # New git tag applied
+    description: "Normalised tag applied"
+    value: ${{ steps.normalise_tag.outputs.new_tag }}
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Debug
+      id: debug
+      shell: bash
+      run: |
+        echo "###################################"
+        echo "Git_Normalise Inputs:"
+        echo "---"
+        echo "tag_prefix=${{ inputs.tag_prefix }}"
+        echo "github_token=${{ inputs.github_token }}"
+        echo "---"
+
+    - name: Detect or add patch version
+      id: normalise_tag
+      shell: bash
+      run: |
+        PREV_TAG=$(git ls-remote --refs --sort='version:refname' --tags origin | \
+                   tail -n1 | \
+                   cut -d'/' -f3)
+
+        if [ "${PREV_TAG}" == "" ]; then
+          exit 0
+        fi
+
+        DOT_COUNT=$(echo ${PREV_TAG} | tr -cd '.' | wc -c)
+        case $DOT_COUNT in
+          0)
+            echo "::set-output name=new_tag::${PREV_TAG}.0.0"
+            ;;
+          1)
+            echo "::set-output name=new_tag::${PREV_TAG}.0"
+            ;;
+          *)
+            echo "Can't normalise this tag"
+            ;;
+        esac
+
+    - name: Push normalised tag
+      shell: bash
+      run: |
+        if [ "${{ steps.normalise_tag.outputs.new_tag }}" != "" ]; then
+          git tag -a ${{ steps.normalise_tag.outputs.new_tag }} -m "Normalised to semantic-version format"
+          git push origin --tags
+        fi
+

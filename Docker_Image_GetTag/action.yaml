@@ -1,0 +1,11 @@
+---
+name: "Docker Image Get Tag"
+description: "Use the GitHub refs to determine the tag for a docker image."
+
+outputs:
+  tag_name:
+    description: "tag to use for the docker image"
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
