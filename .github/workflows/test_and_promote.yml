@@ -160,6 +160,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.tag_version.outputs.new_tag }}
-          release_name: Release ${{ steps.tag_version.outputs.new_tag }}
+          tag_name: ${{ steps.version_bump.outputs.new_tag }}
+          release_name: Release ${{ steps.version_bump.outputs.new_tag }}
           body: ${{ steps.version_bump.outputs.changelog }}
