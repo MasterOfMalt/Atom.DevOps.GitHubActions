@@ -4,7 +4,7 @@ description: 'Promote a branch to a release branch'
 
 inputs:
   dockerfile:  # Path of dockerfile to build
-    description: 'Dockerfile to build'
+    description: 'Path to Dockerfile to build'
     required: false
     default: 'Dockerfile'
   image_name: # Name of image to build.
