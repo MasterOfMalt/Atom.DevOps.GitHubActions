@@ -49,12 +49,12 @@ runs:
             ;;
           *)
             echo "Can't normalise this tag"
-            exit 1
+            ;;
         esac
 
     - name: Push normalised tag
       shell: bash
       run: |
-        git tag ${{ steps.normalise_tag.outputs.new_tag }} -a "Normalised to semantic-release format"
+        git tag -a ${{ steps.normalise_tag.outputs.new_tag }} -m "Normalised to semantic-release format"
         git push origin --tags
 
