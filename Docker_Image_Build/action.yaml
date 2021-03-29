@@ -15,7 +15,7 @@ inputs:
     required: false
     default: "latest"
   registry: # registry containing the container image
-    description: 'docker registry for container image (must me all lover case
+    description: 'docker registry for container image (must be all lower case
                   and end in "/")'
     required: false
     default: ""
