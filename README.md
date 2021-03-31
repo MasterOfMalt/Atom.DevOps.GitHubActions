@@ -10,7 +10,7 @@ Repository of Atom shared GitHub actions
 
 [Docker Image GetTag](Docker_Image_GetTag/README.md)
 
-[Promote](Promote/README.md)
+[Git Normalise Tag](Git_Normalise_Tag/README.md)
 
 ## Testing/Running the GitHub workflow locally
 
