@@ -52,7 +52,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./Docker_Image_Cache
-        id: cache
+        id: nocache
         with:
           image_name: fakeImage
           tag_name: NotATag
