@@ -62,20 +62,19 @@ function main() {
     local image_tag=$2
     local image_full_name=""
 
+    echo "::set-output name=setting::--no-cache"
+
     if docker pull "${image_name}:${image_tag}"; then
         image_full_name="${image_name}:${image_tag}"
     elif docker pull "${image_name}:latest"; then
         image_full_name="${image_name}:latest"
     else
-        echo "::set-output name=setting::--no-cache"
         return
     fi
 
     if prepare_cache_setting "${image_full_name}"; then
         echo "::set-output name=setting::--cache-from=${image_full_name}"
-    else
-        echo "::set-output name=setting::--no-cache"
-    fi    
+    fi
 }
 
 if [ "$IMAGE_NAME" == "" ]; then
