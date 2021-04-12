@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -eu -o pipefail
-set -x
+
 # This will pull a docker image to build from if available,
 # and output the caching data inot the step output variable `setting`
 # Args:
