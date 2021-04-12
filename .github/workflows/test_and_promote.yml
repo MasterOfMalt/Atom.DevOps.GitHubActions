@@ -54,13 +54,26 @@ jobs:
       - uses: ./Docker_Image_Cache
         id: cache
         with:
+          image_name: fakeImage
+          tag_name: NotATag
+          registry: ""
+
+      - name: Check Cache Outputs
+        run: |
+          if [ "${{ steps.cache.outputs.setting }}" != "--no-cache" ]; then
+            exit 1
+          fi
+
+      - uses: ./Docker_Image_Cache
+        id: cache
+        with:
           image_name: ubuntu
           tag_name: latest
           registry: ""
 
       - name: Check Cache Outputs
         run: |
-          if [ "${{ steps.cache.outputs.setting }}" == "" ]; then
+          if [ "${{ steps.cache.outputs.setting }}" != "--no-cache" ]; then
             exit 1
           fi
 
