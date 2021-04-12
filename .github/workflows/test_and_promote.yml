@@ -56,7 +56,7 @@ jobs:
         with:
           image_name: fakeImage
           tag_name: NotATag
-          registry: ""
+          registry: ${{ env.IMAGE_REPO }}
 
       - name: Check Cache Outputs
         run: |
