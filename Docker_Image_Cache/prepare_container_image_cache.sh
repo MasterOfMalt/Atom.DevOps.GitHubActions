@@ -38,7 +38,7 @@ function prepare_cache_setting() {
         return 1
     fi
     image_layers=$( docker image history "${image_full_name}" \
-                    --format "{{.CreatedAt}}#{{.CreatedBy}}" --no-trunc)
+                    --format "{{.CreatedAt}}#{{.CreatedBy}}" --no-trunc || true)
 
     # TODO: Make this more generic and less python orientated
     if ! echo "$image_layers" | grep requirements; then
@@ -62,18 +62,19 @@ function main() {
     local image_tag=$2
     local image_full_name=""
 
-    echo "::set-output name=setting::--no-cache"
-
     if docker pull "${image_name}:${image_tag}"; then
         image_full_name="${image_name}:${image_tag}"
     elif docker pull "${image_name}:latest"; then
         image_full_name="${image_name}:latest"
     else
+        echo "::set-output name=setting::--no-cache"
         return
     fi
 
     if prepare_cache_setting "${image_full_name}"; then
         echo "::set-output name=setting::--cache-from=${image_full_name}"
+    else
+        echo "::set-output name=setting::--no-cache"
     fi
 }
 
