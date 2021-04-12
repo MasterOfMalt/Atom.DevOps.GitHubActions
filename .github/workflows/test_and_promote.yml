@@ -54,7 +54,7 @@ jobs:
       - uses: ./Docker_Image_Cache
         id: nocache
         with:
-          image_name: fakeImage
+          image_name: test_image_name
           tag_name: NotATag
           registry: ${{ env.IMAGE_REPO }}
 
