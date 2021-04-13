@@ -38,7 +38,7 @@ function prepare_cache_setting() {
         return 1
     fi
     image_layers=$( docker image history "${image_full_name}" \
-                    --format "{{.CreatedAt}}#{{.CreatedBy}}" --no-trunc)
+                    --format "{{.CreatedAt}}#{{.CreatedBy}}" --no-trunc || true)
 
     # TODO: Make this more generic and less python orientated
     if ! echo "$image_layers" | grep requirements; then
@@ -75,7 +75,7 @@ function main() {
         echo "::set-output name=setting::--cache-from=${image_full_name}"
     else
         echo "::set-output name=setting::--no-cache"
-    fi    
+    fi
 }
 
 if [ "$IMAGE_NAME" == "" ]; then

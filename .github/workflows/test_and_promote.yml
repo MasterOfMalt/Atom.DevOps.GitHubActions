@@ -52,6 +52,19 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./Docker_Image_Cache
+        id: nocache
+        with:
+          image_name: test_image_name
+          tag_name: NotATag
+          registry: ${{ env.IMAGE_REPO }}
+
+      - name: Check Cache Outputs
+        run: |
+          if [ "${{ steps.nocache.outputs.setting }}" != "--no-cache" ]; then
+            exit 1
+          fi
+
+      - uses: ./Docker_Image_Cache
         id: cache
         with:
           image_name: ubuntu
@@ -60,7 +73,7 @@ jobs:
 
       - name: Check Cache Outputs
         run: |
-          if [ "${{ steps.cache.outputs.setting }}" == "" ]; then
+          if [ "${{ steps.cache.outputs.setting }}" != "--no-cache" ]; then
             exit 1
           fi
 
