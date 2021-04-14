@@ -8,7 +8,7 @@ REF="$GITHUB_REF"
 if [ "$GITHUB_HEAD_REF" != "" ]; then
   REF="$GITHUB_HEAD_REF"
 fi
-if [ "$REF" == 'refs/heads/master' ]; then
+if [ "$REF" == 'refs/heads/master' ] || [ "$REF" == 'refs/heads/main' ]; then
   tag_name="latest"
 else
   tag_name="$(basename "$REF")"
