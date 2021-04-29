@@ -23,6 +23,9 @@ inputs:
     description: "Docker Cache setting for use in docker build."
     required: false
     default: "--no-cache"
+  build_args:
+    description: "Dictionary of build args (eg. { key=ENV_VAR, value="true" }"
+    required: false
 
 outputs:
   image_name_tag:
@@ -46,6 +49,7 @@ runs:
         echo "tag_name=${{ inputs.tag_name }}"
         echo "registry=${{ inputs.registry }}"
         echo "cache_setting=${{ inputs.cache_setting }}"
+        echo "build_args=${{ inputs.build_args }}"
         echo "---"
 
     - run: echo "::set-output name=image_name_tag::${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}"
@@ -55,7 +59,9 @@ runs:
     - name: Build container image (no buildkit)
       shell: bash
       run: |
+        echo "${{ build_args }}" > content.json
         docker build . -f "${{ inputs.dockerfile }}" \
           -t "${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}" \
-          "${{ inputs.cache_setting }}"
+          "${{ inputs.cache_setting }}" \
+          "$(python Docker_Image_Build/parse_dict.py content.json)"
 
