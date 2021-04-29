@@ -24,7 +24,7 @@ inputs:
     required: false
     default: "--no-cache"
   build_args:
-    description: "Dictionary of build args (eg. { key=ENV_VAR, value="true" }"
+    description: 'Dictionary of build args (eg. { key=ENV_VAR, value="true" }'
     required: false
 
 outputs:
