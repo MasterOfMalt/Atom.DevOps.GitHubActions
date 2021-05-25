@@ -14,7 +14,8 @@ Repository of Atom shared GitHub actions
 
 ## Configuration
 
-Copy 'tests/.env_example' to '.env' and edit GITHUB_TOKEN to your github personal access token.
+Copy 'tests/.env_example' to '.env' and edit GITHUB_TOKEN to your github
+personal access token.
 
 ```bash
 ##################################################################
@@ -47,10 +48,12 @@ See: <https://github.com/nektos/act>
 
 Sometimes we may need a newer or modified version of act.
 
-1. Install Go tools 1.14 - (<https://golang.org/doc/install>)
-2. Checkout the act branch/fork
+* Install Go tools 1.14 - (<https://golang.org/doc/install>)
+* Checkout the act branch/fork
+
 ```bash
 git clone git@github.com:MasterOfMalt/act.git
 git checkout PLOPS-427_fix_act_composite_actions
 ```
-3. Install it with ```make install```
+
+* Install it with `make install`
