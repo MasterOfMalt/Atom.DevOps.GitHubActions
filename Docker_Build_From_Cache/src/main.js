@@ -77,4 +77,4 @@ async function run() {
     core.setOutput("image_name_tags", output);
 }
 
-await run()
+run()

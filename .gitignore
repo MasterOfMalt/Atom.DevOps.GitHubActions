@@ -2,5 +2,7 @@
 .idea
 .vscode
 
+node_modules
+# Environment files
 .tests/.env
 .env
