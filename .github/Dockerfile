@@ -1,3 +1,8 @@
-from ubuntu:latest
+FROM ubuntu:latest AS base
 
-CMD echo "HELLO WORLD"
+RUN echo "HELLO WORLD" > /opt/stuff.txt
+
+FROM ubuntu:latest AS runner
+
+COPY --from=base /opt/stuff.txt /opt/copied_stuff.txt
+

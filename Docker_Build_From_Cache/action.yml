@@ -1,0 +1,33 @@
+---
+name: 'Docker Build From Cache'
+description: 'Promote a branch to a release branch'
+author: "Atom Supplies"
+
+inputs:
+  dockerfile:  # Path of dockerfile to build
+    description: 'Path to Dockerfile to build'
+    required: false
+    default: 'Dockerfile'
+  image_prefix: # Prefix name of image to build. Will have targets suffix
+    description: 'Docker image name (without registry or tag)'
+    required: true
+  image_targets: # List of targets to build.
+    description: 'List of Docker targets to build in multistage build'
+    required: false
+    default: ""
+  pull_tag_name:
+    description: "Docker image tag to pull from cache for all images"
+    required: false
+    default: "latest"
+  registry: # registry containing the container image
+    description: 'docker registry for container image (must be all lower case
+                  and end in "/")'
+    required: false
+    default: ""
+outputs:
+  image_name_tags:
+    description: "Comma separated list of full image name and tags used for the docker image"
+
+runs:
+  using: 'node12'
+  main: 'src/main.js'
