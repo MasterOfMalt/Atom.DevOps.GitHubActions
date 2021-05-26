@@ -1736,7 +1736,7 @@ async function run() {
                cache_setting );
         });
         await previous_build;
-        let output = build_targets.map(item=>item.image_name_tag).join(',');
+        let output = build_targets.map(item=>item.image_name_tag).join(' ');
         core.setOutput("image_name_tags", output);
     }
     catch (error) {

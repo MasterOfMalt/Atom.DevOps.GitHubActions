@@ -14,7 +14,9 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+#        with:
+#          path: "my-action"
 
       ################################
       # Run Linter against code base #
@@ -56,14 +58,14 @@ jobs:
         with:
           dockerfile: ./.github/Dockerfile
           image_prefix: test_image_name_
-          pull_tag_name: ${{ steps.get_tag.outputs.tag_name }}
+          tag_name: ${{ steps.get_tag.outputs.tag_name }}
           registry: ${{ env.IMAGE_REPO }}
           image_targets: "base,runner"
 
       - name: Check Cache Outputs
         run: |
           set -x
-          if [ "${{ steps.build_from_cache.outputs.image_name_tags }}" != "${{ env.IMAGE_REPO }}test_image_name_base:${{ steps.get_tag.outputs.tag_name }},${{ env.IMAGE_REPO }}test_image_name_base:${{ steps.get_tag.outputs.tag_name }}" ]; then
+          if [ "${{ steps.build_from_cache.outputs.image_name_tags }}" != "${{ env.IMAGE_REPO }}test_image_name_base:${{ steps.get_tag.outputs.tag_name }} ${{ env.IMAGE_REPO }}test_image_name_runner:${{ steps.get_tag.outputs.tag_name }}" ]; then
             exit 1
           fi
 
@@ -71,12 +73,13 @@ jobs:
         run: |
           # For this tests purpose we need to add the latest tag too. In the real world this
           # is done during a devel merge by GetTag retrieving 'latest'
-          for image in
-          docker tag \
-            "${IMAGE_REPO}test_image_name:${{ steps.get_tag.outputs.tag_name }}" \
-            "${IMAGE_REPO}test_image_name:latest"
-          docker push "${IMAGE_REPO}test_image_name:latest"
-          docker push "${IMAGE_REPO}test_image_name:${{ steps.get_tag.outputs.tag_name }}"
+          for target in base runner; do
+            docker tag \
+              "${IMAGE_REPO}test_image_name_${target}:${{ steps.get_tag.outputs.tag_name }}" \
+              "${IMAGE_REPO}test_image_name_${target}:latest"
+            docker push "${IMAGE_REPO}test_image_name_${target}:latest"
+            docker push "${IMAGE_REPO}test_image_name_${target}:${{ steps.get_tag.outputs.tag_name }}"
+          done
 
       - uses: ./Docker_Image_Cache
         id: nocache
