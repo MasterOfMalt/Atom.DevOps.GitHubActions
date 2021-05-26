@@ -15,17 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-#        with:
-#          path: "my-action"
 
       ################################
       # Run Linter against code base #
       ################################
       - name: Lint Code Base
+        if: env.ACT != 'true'
         uses: github/super-linter@v3
         env:
           VALIDATE_MARKDOWN: true
           VALIDATE_YAML: true
+          VALIDATE_JAVASCRIPT: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:

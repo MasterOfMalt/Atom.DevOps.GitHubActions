@@ -53,7 +53,7 @@ async function run() {
         const registry = core.getInput("registry");
 
         // Set up per image target settings and cache
-        // start cache processes (no dependancies)
+        // start cache processes (no dependencies)
         let build_targets = image_targets.map(target => {
             const image_target_name = registry + image_prefix + target;
             return {
