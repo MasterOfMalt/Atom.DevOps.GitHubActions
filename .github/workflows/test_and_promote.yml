@@ -35,7 +35,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: npm ci
+      - run: cd docker-build-from-cache && npm ci
 
   test:
     name: "Test"
