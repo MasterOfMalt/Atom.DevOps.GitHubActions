@@ -2,7 +2,7 @@
 set -eu
 #set -x
 
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC1091,SC1094
 source "${PWD}/.env"
 
 job="${1:-promote}"
