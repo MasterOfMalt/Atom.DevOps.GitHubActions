@@ -10,10 +10,13 @@ async function pull_image_cache(registry, image_name, pull_tag_name) {
     let tagged_name;
     let cached = true;
     let cache_setting;
+    let exec_options = {
+        ignoreReturnCode: true,
+    }
     // Try pulling with the tagged name
-    if (await exec.exec('docker', ['pull', image_name + ':' + pull_tag_name]) === 0) {
+    if (await exec.exec('docker', ['pull', image_name + ':' + pull_tag_name], exec_options) === 0) {
         tagged_name = image_name + ':' + pull_tag_name;
-    } else if(await exec.exec('docker', ['pull', image_name + ':' + 'latest']) === 0) {
+    } else if(pull_tag_name !== 'latest' && await exec.exec('docker', ['pull', image_name + ':' + 'latest'], exec_options) === 0) {
         tagged_name =  image_name + ':' + 'latest';
     } else {
         cached = false;
@@ -24,10 +27,12 @@ async function pull_image_cache(registry, image_name, pull_tag_name) {
     else {
         cache_setting = "--no-cache";
     }
-    return [cache_setting, tagged_name];
+    console.log("Cache setting will be " + cache_setting);
+    return [cache_setting];
 }
 
 async function build_tagged_image(dockerfile, target_name, image_name_tag, cache_setting) {
+    console.log("Starting build of " + target_name)
     await exec.exec('docker', [
         'build', '.', '-f', dockerfile,
         '--target', target_name,
@@ -59,22 +64,25 @@ async function run() {
             }
         });
 
+        console.log("Caches prepared");
+
         // start build processes (depend on the cache target and previous build)
         let previous_build = null;
-        build_targets.each(async (build_target)=> {
+        await build_targets.forEach(async (build_target)=> {
            if(previous_build) {
                // Wait for preceding build
                await previous_build;
+               console.log("Previous target built.")
            }
            // Wait for cache pull
            let cache_setting = await build_target.cache_job;
+           console.log("Cache pull complete. Starting build of " + build_target.target);
            // build and tag this target
            previous_build = build_tagged_image(dockerfile, build_target.target, build_target.image_name_tag,
                cache_setting );
         });
         await previous_build;
-
-        let output = build_targets.reduce( (accumulator, currentValue) => accumulator + "," + currentValue.image_name_tag, "");
+        let output = build_targets.map(item=>item.image_name_tag).join(',');
         core.setOutput("image_name_tags", output);
     }
     catch (error) {

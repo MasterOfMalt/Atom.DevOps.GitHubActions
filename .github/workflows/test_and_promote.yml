@@ -62,6 +62,7 @@ jobs:
 
       - name: Check Cache Outputs
         run: |
+          set -x
           if [ "${{ steps.build_from_cache.outputs.image_name_tags }}" != "${{ env.IMAGE_REPO }}test_image_name_base:${{ steps.get_tag.outputs.tag_name }},${{ env.IMAGE_REPO }}test_image_name_base:${{ steps.get_tag.outputs.tag_name }}" ]; then
             exit 1
           fi
