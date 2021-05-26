@@ -30,6 +30,13 @@ jobs:
           VALIDATE_BASH: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  test_js:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm ci
+
   test:
     name: "Test"
     runs-on: ubuntu-latest
@@ -55,7 +62,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: ./Docker_Build_From_Cache
+      - uses: ./docker-build-from-cache
         id: build_from_cache
         with:
           dockerfile: ./.github/Dockerfile

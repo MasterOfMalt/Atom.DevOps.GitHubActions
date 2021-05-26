@@ -4,6 +4,7 @@
   "author": "Atom Group",
   "scripts": {
     "prepare": "ncc build src/main.js -o dist --source-map --license licenses.txt",
+    "test": "jest",
     "all": "npm run prepare"
   },
   "dependencies": {
@@ -11,6 +12,7 @@
     "@actions/exec": "^1.0.4"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.27.0"
+    "@vercel/ncc": "^0.27.0",
+    "jest": "^27.0.1"
   }
 }
