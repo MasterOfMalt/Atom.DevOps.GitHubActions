@@ -25,7 +25,7 @@ jobs:
         env:
           VALIDATE_MARKDOWN: true
           VALIDATE_YAML: true
-          VALIDATE_JAVASCRIPT: true
+          VALIDATE_JAVASCRIPT_ES: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:
