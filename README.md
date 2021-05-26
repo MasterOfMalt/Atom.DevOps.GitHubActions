@@ -12,36 +12,48 @@ Repository of Atom shared GitHub actions
 
 [Git Normalise Tag](Git_Normalise_Tag/README.md)
 
+## Configuration
+
+Copy 'tests/.env_example' to 'tests/.env' and edit GITHUB_TOKEN to your github
+personal access token.
+
+```bash
+##################################################################
+# GitHub personal access token token (For testing the workflow locally)
+export GITHUB_TOKEN='<your github personal access token>'
+```
+
 ## Testing/Running the GitHub workflow locally
 
 You can run, or indeed test, the workflow here. This will enable you to both
 check changes to the workflow or check your code against the workflow prior to
 pushing. This will help you assess if it will pass the checks.
 
-~~First, install act. See the instruction here:~~
-~~<https://github.com/nektos/act#installation>~~
+First, install act. See the instruction here:
+<https://github.com/nektos/act#installation>
 
-First, you'll need to build and install a special version of 'act' which
-supports composite actions. This can be done by checking out our fork and
-branch as follows:
-
-```bash
-git clone git@github.com:MasterOfMalt/act.git
-git checkout PLOPS-427_fix_act_composite_actions
-cd act
-make install
-```
-
-Note: you'll also need to install Go tools 1.14 - (<https://golang.org/doc/install>)
-
-Next, ensure you have the GITHUB_TOKEN configured in your .env as described
+Next, ensure you have the GITHUB_TOKEN configured in your tests/.env as described
 above. Then execute the following:
 
 ```bash
-source .env
 cd tests
+source .env
 ./run_act.sh
 ```
 
 Here are some generic instruction for testing GitHub workflows locally.
 See: <https://github.com/nektos/act>
+
+## If you need to use a development version of act
+
+Sometimes we may need a newer or modified version of act.
+
+* Install Go tools 1.14 - (<https://golang.org/doc/install>)
+* Checkout the act branch/fork
+
+```bash
+git clone git@github.com:MasterOfMalt/act.git
+git checkout PLOPS-427_fix_act_composite_actions
+```
+
+* Install it with `make install`

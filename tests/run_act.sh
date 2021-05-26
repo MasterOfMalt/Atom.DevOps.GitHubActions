@@ -2,7 +2,7 @@
 set -eu
 #set -x
 
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC1091,SC1094
 source "${PWD}/.env"
 
 job="${1:-promote}"
@@ -13,7 +13,7 @@ time act \
   --secret GITHUB_TOKEN="$GITHUB_TOKEN" \
   --eventpath "tests/${event}.json" \
   --directory ../ \
-  -P ubuntu-18.04=nektos/act-environments-ubuntu:18.04 \
-  -P ubuntu-latest=nektos/act-environments-ubuntu:18.04 \
+  -P ubuntu-20.04=catthehacker/ubuntu:act-20.04 \
+  -P ubuntu-latest=catthehacker/ubuntu:act-20.04 \
   -j "${job}" \
   "${event}" || true
