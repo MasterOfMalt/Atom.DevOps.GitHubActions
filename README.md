@@ -14,7 +14,7 @@ Repository of Atom shared GitHub actions
 
 ## Configuration
 
-Copy 'tests/.env_example' to '.env' and edit GITHUB_TOKEN to your github
+Copy 'tests/.env_example' to 'tests/.env' and edit GITHUB_TOKEN to your github
 personal access token.
 
 ```bash
@@ -32,12 +32,12 @@ pushing. This will help you assess if it will pass the checks.
 First, install act. See the instruction here:
 <https://github.com/nektos/act#installation>
 
-Next, ensure you have the GITHUB_TOKEN configured in your .env as described
+Next, ensure you have the GITHUB_TOKEN configured in your tests/.env as described
 above. Then execute the following:
 
 ```bash
-source .env
 cd tests
+source .env
 ./run_act.sh
 ```
 

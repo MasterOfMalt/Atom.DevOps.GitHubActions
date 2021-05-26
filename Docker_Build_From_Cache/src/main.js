@@ -28,7 +28,7 @@ async function pull_image_cache(registry, image_name, pull_tag_name) {
         cache_setting = "--no-cache";
     }
     console.log("Cache setting will be " + cache_setting);
-    return [cache_setting];
+    return cache_setting;
 }
 
 async function build_tagged_image(dockerfile, target_name, image_name_tag, cache_setting) {
@@ -90,4 +90,8 @@ async function run() {
     }
 }
 
-run()
+if (require.main === module) {
+    run();
+}
+
+module.exports = pull_image_cache;
