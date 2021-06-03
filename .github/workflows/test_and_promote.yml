@@ -69,12 +69,22 @@ jobs:
           image_prefix: test_image_name_
           tag_name: ${{ steps.get_tag.outputs.tag_name }}
           registry: ${{ env.IMAGE_REPO }}
-          image_targets: "base,runner"
+          build_args: GREETING="Greetings", ADDRESSEE="Github"
+          image_targets: "base, runner"
 
       - name: Check Cache Outputs
         run: |
           set -x
           if [ "${{ steps.build_from_cache.outputs.image_name_tags }}" != "${{ env.IMAGE_REPO }}test_image_name_base:${{ steps.get_tag.outputs.tag_name }} ${{ env.IMAGE_REPO }}test_image_name_runner:${{ steps.get_tag.outputs.tag_name }}" ]; then
+            exit 1
+          fi
+
+      - name: Verify arguments worked
+        run: |
+          # Verify that our docker image does what we meant it to
+          set -x
+          RESULT=$(docker run --rm "${IMAGE_REPO}test_image_name_runner:${{ steps.get_tag.outputs.tag_name }}")
+          if [ "${RESULT}" != "Greetings, Github." ]; then
             exit 1
           fi
 

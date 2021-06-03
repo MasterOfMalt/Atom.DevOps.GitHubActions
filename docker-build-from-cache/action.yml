@@ -24,6 +24,10 @@ inputs:
                   and end in "/")'
     required: false
     default: ""
+  build_args:
+    description: "Docker build arguments. Format NAME=value, comma separated"
+    required: false
+    default: ""
 outputs:
   image_name_tags:
     description: "Comma separated list of full image name and tags used for the docker image"
