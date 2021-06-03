@@ -27,7 +27,8 @@ Example: _.github/workflows/CI.yml_
 
 This will build and tag the base and runner targets from the dockerfile.
 It will pull them from cache if it exists, to speed up the build process.
-Note that a further step will be needed to upload these images (and form the next cache stage):
+Note that a further step will be needed to upload these images 
+(and form the next cache stage):
 
 ```yaml
       - name: push_tagged_targets
