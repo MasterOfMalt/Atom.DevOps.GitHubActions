@@ -40,7 +40,7 @@ jobs:
       - name: Ensure the current dist is the same as the built one
         if: env.ACT != 'true'
         run: |
-          if git status --porcelain; then
+          if ! git diff --quiet; then
             echo "ERROR: Did you forget to commit something?"
             exit 1
           fi
