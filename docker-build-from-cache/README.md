@@ -13,6 +13,7 @@ Use with [GitHub Actions](https://github.com/features/actions)
 
 Example: _.github/workflows/CI.yml_
 
+```yaml
       - uses: ./docker-build-from-cache
         id: build_from_cache
         with:
@@ -21,9 +22,14 @@ Example: _.github/workflows/CI.yml_
           tag_name: ${{ steps.get_tag.outputs.tag_name }}
           registry: ${{ env.IMAGE_REPO }}
           image_targets: "base,runner"
-          
-This will build and tag the base and runner targets from the dockerfile. It will pull them from cache if it exists, to speed up the build process. Note that a further step will be needed to upload these images (and form the next cache stage):
+          additional_args: '--build-arg GREETING="Greetings" --build-arg ADDRESSEE="Github Actions"'
+```
 
+This will build and tag the base and runner targets from the dockerfile. 
+It will pull them from cache if it exists, to speed up the build process. 
+Note that a further step will be needed to upload these images (and form the next cache stage):
+
+```yaml
       - name: push_tagged_targets
         run: |
           # For this tests purpose we need to add the latest tag too. In the real world this
@@ -35,6 +41,7 @@ This will build and tag the base and runner targets from the dockerfile. It will
             docker push "${IMAGE_REPO}test_image_name_${target}:latest"
             docker push "${IMAGE_REPO}test_image_name_${target}:${{ steps.get_tag.outputs.tag_name }}"
           done
+```
 
 Mandatory Arguments:
 
@@ -47,8 +54,9 @@ Optional arguments:
 
 ```yaml
 image_targets: "<comma separated list of targets to build. Defaults to none>"
-tag_name: "<Tag name to pulll and build. Defaults to latest>"
+tag_name: "<Tag name to pull and build. Defaults to latest>"
 registry: "<registry path. Defaults to local. must be all lower case and end in '/'>"
+additional_args: '<additional docker command line arguments. Passed exactly to each docker build operation>'
 ```
 
 Outputs:
@@ -63,9 +71,13 @@ The source needs to be built into the dist for this to run. You will not be able
 to see your changes without it.
 You need to have npm installed, and to run:
 
+```shell
     npm install
     npm run prepare
+```
 
 For testing in act the following can be helpful (from the project root/tests folder):
 
+```shell
     (cd ../docker-build-from-cache; npm run prepare) && ./run_act.sh test
+```

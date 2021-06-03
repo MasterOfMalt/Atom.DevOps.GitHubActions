@@ -37,6 +37,14 @@ jobs:
       - uses: actions/checkout@v2
       - run: cd docker-build-from-cache && npm ci
 
+      - name: Ensure the current dist is the same as the built one
+        if: env.ACT != 'true'
+        run: |
+          if git status --porcelain; then
+            echo "ERROR: Did you forget to commit something?"
+            exit 1
+          fi
+
   test:
     name: "Test"
     runs-on: ubuntu-latest
@@ -61,21 +69,6 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Prepare the build from cache build
-        run: |
-          cd docker-build-from-cache
-          npm install
-          npm run prepare
-          npm test
-
-      - name: Ensure the current dist is the same as the built one
-        if: env.ACT != 'true'
-        run: |
-          if git status --porcelain; then
-            echo "ERROR: Did you forget to commit something?"
-            exit 1
-          fi
 
       - uses: ./docker-build-from-cache
         id: build_from_cache
