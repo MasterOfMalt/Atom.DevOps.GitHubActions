@@ -33,13 +33,7 @@ Note that a further step will be needed to upload these images
 ```yaml
       - name: push_tagged_targets
         run: |
-          # For this tests purpose we need to add the latest tag too. In the real world this
-          # is done during a devel merge by GetTag retrieving 'latest'
           for target in base runner; do
-            docker tag \
-              "${IMAGE_REPO}test_image_name_${target}:${{ steps.get_tag.outputs.tag_name }}" \
-              "${IMAGE_REPO}test_image_name_${target}:latest"
-            docker push "${IMAGE_REPO}test_image_name_${target}:latest"
             docker push "${IMAGE_REPO}test_image_name_${target}:${{ steps.get_tag.outputs.tag_name }}"
           done
 ```
