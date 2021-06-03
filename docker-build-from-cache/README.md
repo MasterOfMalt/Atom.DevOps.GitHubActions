@@ -56,3 +56,16 @@ Outputs:
 ```yaml
 image_name_tags: "Comma separated list of full image name and tags"
 ```
+
+## Developing this
+
+The source needs to be built into the dist for this to run. You will not be able
+to see your changes without it.
+You need to have npm installed, and to run:
+
+    npm install
+    npm run prepare
+
+For testing in act the following can be helpful (from the project root/tests folder):
+
+    (cd ../docker-build-from-cache; npm run prepare) && ./run_act.sh test

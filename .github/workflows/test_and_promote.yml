@@ -62,6 +62,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Prepare the build from cache build
+        run: |
+          cd docker-build-from-cache
+          npm install
+          npm run prepare
+
+      - name: Ensure the current dist is the same as the built one
+        if: env.ACT != 'true'
+        run: |
+          if git status --porcelain; then
+            echo "ERROR: Did you forget to commit something?"
+            exit 1
+          fi
+
       - uses: ./docker-build-from-cache
         id: build_from_cache
         with:
