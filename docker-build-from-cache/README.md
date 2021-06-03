@@ -13,6 +13,29 @@ Use with [GitHub Actions](https://github.com/features/actions)
 
 Example: _.github/workflows/CI.yml_
 
+      - uses: ./docker-build-from-cache
+        id: build_from_cache
+        with:
+          dockerfile: ./.github/Dockerfile
+          image_prefix: test_image_name_
+          tag_name: ${{ steps.get_tag.outputs.tag_name }}
+          registry: ${{ env.IMAGE_REPO }}
+          image_targets: "base,runner"
+          
+This will build and tag the base and runner targets from the dockerfile. It will pull them from cache if it exists, to speed up the build process. Note that a further step will be needed to upload these images (and form the next cache stage):
+
+      - name: push_tagged_targets
+        run: |
+          # For this tests purpose we need to add the latest tag too. In the real world this
+          # is done during a devel merge by GetTag retrieving 'latest'
+          for target in base runner; do
+            docker tag \
+              "${IMAGE_REPO}test_image_name_${target}:${{ steps.get_tag.outputs.tag_name }}" \
+              "${IMAGE_REPO}test_image_name_${target}:latest"
+            docker push "${IMAGE_REPO}test_image_name_${target}:latest"
+            docker push "${IMAGE_REPO}test_image_name_${target}:${{ steps.get_tag.outputs.tag_name }}"
+          done
+
 Mandatory Arguments:
 
 ```yaml
