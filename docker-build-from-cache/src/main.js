@@ -1,3 +1,5 @@
+'use strict';
+
 const core = require('@actions/core');
 const exec = require('@actions/exec');
 
@@ -33,13 +35,12 @@ async function pull_image_cache(registry, image_name, pull_tag_name) {
 }
 
 /* Runs the build and tags it. Returns a promise */
-function build_tagged_image(dockerfile, target_name, image_name_tag, cache_setting) {
+function build_tagged_image(dockerfile, target_name, image_name_tag, cache_setting, additional_args) {
     console.log("Starting build of " + target_name);
-    return exec.exec('docker', [
-        'build', '.', '-f', dockerfile,
-        '--target', target_name,
-        '-t', image_name_tag, cache_setting
-    ]);
+    let cmd = "docker build . -f " + dockerfile + " --target " + target_name +
+            " -t " + image_name_tag + " " + cache_setting + " " + additional_args;
+    console.log("Whole command is '" + cmd + "'");
+    return exec.exec(cmd);
 }
 
 function process_arguments() {
@@ -51,11 +52,12 @@ function process_arguments() {
         image_prefix: core.getInput("image_prefix"),
         image_targets: image_targets,
         tag_name: core.getInput("tag_name"),
+        additional_args: core.getInput("additional_args"),
         registry: core.getInput("registry")
     }
 }
 
-async function start_build_when_ready_job(build_target, previous_build_job, dockerfile) {
+async function start_build_when_ready_job(build_target, previous_build_job, dockerfile, additional_args) {
     if(previous_build_job) {
         // Wait for preceding build
         await previous_build_job;
@@ -67,7 +69,7 @@ async function start_build_when_ready_job(build_target, previous_build_job, dock
 
     // Start the build and tag job
     return build_tagged_image(dockerfile, build_target.target, build_target.image_name_tag,
-        cache_setting );
+        cache_setting, additional_args);
 }
 
 
@@ -77,7 +79,7 @@ async function run() {
         // It will assume build targets depend on their potential cache,
         // and on earlier build targets - so they come out in order.
         const args = process_arguments();
-
+        console.log("Additional args are " + args.additional_args);
         // Set up per image target settings and cache
         // start cache processes (no dependencies)
         let build_targets = args.image_targets.map(target => {
@@ -96,7 +98,7 @@ async function run() {
         let previous_build = null;
 
         await build_targets.forEach((build_target)=> {
-            previous_build = start_build_when_ready_job(build_target, previous_build, args.dockerfile);
+            previous_build = start_build_when_ready_job(build_target, previous_build, args.dockerfile, args.additional_args);
         });
 
         await previous_build;
@@ -112,4 +114,7 @@ if (require.main === module) {
     run().then();
 }
 
-module.exports = pull_image_cache;
+module.exports = {
+    pull_image_cache: pull_image_cache,
+    build_tagged_image: build_tagged_image,
+};

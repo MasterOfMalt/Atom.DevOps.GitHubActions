@@ -5,4 +5,5 @@ FROM ubuntu:20.04 AS runner
 ARG GREETING="Hello"
 ARG ADDRESSEE="World"
 COPY --from=base /opt/stuff.txt /opt/copied_stuff.txt
-CMD echo ${GREETING}, ${ADDRESSEE}.
+RUN echo ${GREETING}, ${ADDRESSEE}. >/opt/greet.txt
+CMD cat /opt/greet.txt

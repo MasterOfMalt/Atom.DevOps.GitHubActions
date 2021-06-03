@@ -24,8 +24,8 @@ inputs:
                   and end in "/")'
     required: false
     default: ""
-  build_args:
-    description: "Docker build arguments. Format NAME=value, comma separated"
+  additional_args:
+    description: "Docker additional arguments."
     required: false
     default: ""
 outputs:
