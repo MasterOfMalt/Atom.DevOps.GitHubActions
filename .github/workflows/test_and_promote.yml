@@ -35,7 +35,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: cd docker-build-from-cache && npm ci
+      - run: |
+          cd docker-build-from-cache
+          npm ci
+          npm run all
 
       - name: Ensure the current dist is the same as the built one
         if: env.ACT != 'true'
