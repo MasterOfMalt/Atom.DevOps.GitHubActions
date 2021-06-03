@@ -25,8 +25,8 @@ Example: _.github/workflows/CI.yml_
           additional_args: '--build-arg GREETING="Greetings" --build-arg ADDRESSEE="Github Actions"'
 ```
 
-This will build and tag the base and runner targets from the dockerfile. 
-It will pull them from cache if it exists, to speed up the build process. 
+This will build and tag the base and runner targets from the dockerfile.
+It will pull them from cache if it exists, to speed up the build process.
 Note that a further step will be needed to upload these images (and form the next cache stage):
 
 ```yaml
