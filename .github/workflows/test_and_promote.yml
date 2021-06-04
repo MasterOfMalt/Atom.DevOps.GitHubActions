@@ -118,7 +118,6 @@ jobs:
             docker push "${IMAGE_REPO}test_image_name_${target}:${{ steps.get_tag.outputs.tag_name }}"
           done
 
-
       - uses: ./Docker_Image_Cache
         id: nocache
         with:

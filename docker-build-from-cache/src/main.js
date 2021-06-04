@@ -120,6 +120,7 @@ async function run() {
         await previous_build;
 
         if(build_targets.length > 1) {
+            console.log("Tagging the final stage image with " + args.final_tag_name);
             await main.tag_build(build_targets.slice(-1)[0].image_name_tag, args.final_tag_name);
         }
 
