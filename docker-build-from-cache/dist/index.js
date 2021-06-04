@@ -1738,7 +1738,7 @@ function process_arguments() {
 }
 
 async function tag_build(source_tag, dest_tag) {
-    // await exec.exec("docker", ["tag", ])
+    await exec.exec("docker", ["tag", source_tag, dest_tag]);
 }
 
 async function run() {
