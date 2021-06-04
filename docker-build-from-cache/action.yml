@@ -24,6 +24,10 @@ inputs:
                   and end in "/")'
     required: false
     default: ""
+  additional_args:
+    description: "Docker additional arguments."
+    required: false
+    default: ""
 outputs:
   image_name_tags:
     description: "Comma separated list of full image name and tags used for the docker image"

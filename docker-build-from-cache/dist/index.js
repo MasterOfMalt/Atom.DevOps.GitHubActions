@@ -1,11 +1,11 @@
 require('./sourcemap-register.js');module.exports =
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -104,7 +104,6 @@ function escapeProperty(s) {
 /***/ 186:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -390,7 +389,6 @@ exports.getState = getState;
 /***/ 717:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 // For internal use, subject to change.
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -439,7 +437,6 @@ exports.issueCommand = issueCommand;
 /***/ 278:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -466,7 +463,6 @@ exports.toCommandValue = toCommandValue;
 /***/ 514:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -517,7 +513,6 @@ exports.exec = exec;
 /***/ 159:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -1124,7 +1119,6 @@ class ExecState extends events.EventEmitter {
 /***/ 962:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -1333,7 +1327,6 @@ function isUnixExecutable(stats) {
 /***/ 436:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -1650,7 +1643,9 @@ function copyFile(srcFile, destFile, force) {
 /***/ }),
 
 /***/ 713:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+
 
 const core = __nccwpck_require__(186);
 const exec = __nccwpck_require__(514);
@@ -1660,6 +1655,7 @@ const exec = __nccwpck_require__(514);
 // When pulling an image - we try the current tag name first,
 // failing that, we try the latest.
 // if there's nothing to pull - there is no cache.
+// Returns a cache setting (when the promise is fulfilled)
 async function pull_image_cache(registry, image_name, pull_tag_name) {
     let tagged_name;
     let cached = true;
@@ -1682,39 +1678,64 @@ async function pull_image_cache(registry, image_name, pull_tag_name) {
         cache_setting = "--no-cache";
     }
     console.log("Cache setting will be " + cache_setting);
-    return [cache_setting];
+    return cache_setting;
 }
 
-async function build_tagged_image(dockerfile, target_name, image_name_tag, cache_setting) {
-    console.log("Starting build of " + target_name)
-    await exec.exec('docker', [
-        'build', '.', '-f', dockerfile,
-        '--target', target_name,
-        '-t', image_name_tag, cache_setting
-    ])
+/* Runs the build and tags it. Returns a promise */
+function build_tagged_image(dockerfile, target_name, image_name_tag, cache_setting, additional_args) {
+    console.log("Starting build of " + target_name);
+    let cmd = "docker build . -f " + dockerfile + " --target " + target_name +
+            " -t " + image_name_tag + " " + cache_setting + " " + additional_args;
+    console.log("Whole command is '" + cmd + "'");
+    return exec.exec(cmd);
 }
+
+function process_arguments() {
+    let image_targets= core.getInput("image_targets").split(',');
+    image_targets = image_targets.map(item=>item.trim());
+    console.log(image_targets);
+    return {
+        dockerfile: core.getInput("dockerfile"),
+        image_prefix: core.getInput("image_prefix"),
+        image_targets: image_targets,
+        tag_name: core.getInput("tag_name"),
+        additional_args: core.getInput("additional_args"),
+        registry: core.getInput("registry")
+    }
+}
+
+async function start_build_when_ready_job(build_target, previous_build_job, dockerfile, additional_args) {
+    if(previous_build_job) {
+        // Wait for preceding build
+        await previous_build_job;
+        console.log("Previous target built.")
+    }
+    // Wait for cache pull
+    let cache_setting = await build_target.cache_job;
+    console.log("Cache pull complete. Starting build of " + build_target.target);
+
+    // Start the build and tag job
+    return build_tagged_image(dockerfile, build_target.target, build_target.image_name_tag,
+        cache_setting, additional_args);
+}
+
 
 async function run() {
     try {
         // This will start all cache jobs.
         // It will assume build targets depend on their potential cache,
         // and on earlier build targets - so they come out in order.
-
-        const dockerfile = core.getInput("dockerfile");
-        const image_prefix = core.getInput("image_prefix");
-        const image_targets = core.getInput("image_targets").split(',');
-        const tag_name = core.getInput("tag_name");
-        const registry = core.getInput("registry");
-
+        const args = process_arguments();
+        console.log("Additional args are " + args.additional_args);
         // Set up per image target settings and cache
-        // start cache processes (no dependancies)
-        let build_targets = image_targets.map(target => {
-            const image_target_name = registry + image_prefix + target;
+        // start cache processes (no dependencies)
+        let build_targets = args.image_targets.map(target => {
+            const image_target_name = args.registry + args.image_prefix + target;
             return {
                 target: target,
                 image_target_name: image_target_name,
-                image_name_tag: image_target_name + ':' + tag_name,
-                cache_job: pull_image_cache(registry, image_target_name, tag_name )
+                image_name_tag: image_target_name + ':' + args.tag_name,
+                cache_job: pull_image_cache(args.registry, image_target_name, args.tag_name )
             }
         });
 
@@ -1722,19 +1743,11 @@ async function run() {
 
         // start build processes (depend on the cache target and previous build)
         let previous_build = null;
-        await build_targets.forEach(async (build_target)=> {
-           if(previous_build) {
-               // Wait for preceding build
-               await previous_build;
-               console.log("Previous target built.")
-           }
-           // Wait for cache pull
-           let cache_setting = await build_target.cache_job;
-           console.log("Cache pull complete. Starting build of " + build_target.target);
-           // build and tag this target
-           previous_build = build_tagged_image(dockerfile, build_target.target, build_target.image_name_tag,
-               cache_setting );
+
+        await build_targets.forEach((build_target)=> {
+            previous_build = start_build_when_ready_job(build_target, previous_build, args.dockerfile, args.additional_args);
         });
+
         await previous_build;
         let output = build_targets.map(item=>item.image_name_tag).join(' ');
         core.setOutput("image_name_tags", output);
@@ -1744,15 +1757,20 @@ async function run() {
     }
 }
 
-run()
+if (require.main === require.cache[eval('__filename')]) {
+    run().then();
+}
 
+module.exports = {
+    pull_image_cache: pull_image_cache,
+    build_tagged_image: build_tagged_image,
+};
 
 /***/ }),
 
 /***/ 357:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("assert");;
 
 /***/ }),
@@ -1760,7 +1778,6 @@ module.exports = require("assert");;
 /***/ 129:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("child_process");;
 
 /***/ }),
@@ -1768,7 +1785,6 @@ module.exports = require("child_process");;
 /***/ 614:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("events");;
 
 /***/ }),
@@ -1776,7 +1792,6 @@ module.exports = require("events");;
 /***/ 747:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("fs");;
 
 /***/ }),
@@ -1784,7 +1799,6 @@ module.exports = require("fs");;
 /***/ 87:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("os");;
 
 /***/ }),
@@ -1792,7 +1806,6 @@ module.exports = require("os");;
 /***/ 622:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("path");;
 
 /***/ }),
@@ -1800,7 +1813,6 @@ module.exports = require("path");;
 /***/ 669:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("util");;
 
 /***/ })

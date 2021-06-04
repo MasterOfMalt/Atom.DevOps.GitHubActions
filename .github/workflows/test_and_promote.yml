@@ -35,7 +35,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: cd docker-build-from-cache && npm ci
+      - run: |
+          cd docker-build-from-cache
+          npm ci
+          npm run all
+
+      - name: Ensure the current dist is the same as the built one
+        if: env.ACT != 'true'
+        run: |
+          if ! git diff --quiet; then
+            echo "ERROR: Did you forget to commit something?"
+            exit 1
+          fi
 
   test:
     name: "Test"
@@ -69,12 +80,22 @@ jobs:
           image_prefix: test_image_name_
           tag_name: ${{ steps.get_tag.outputs.tag_name }}
           registry: ${{ env.IMAGE_REPO }}
-          image_targets: "base,runner"
+          additional_args: '--build-arg GREETING="Greetings" --build-arg ADDRESSEE="Github Actions"'
+          image_targets: "base, runner"
 
       - name: Check Cache Outputs
         run: |
           set -x
           if [ "${{ steps.build_from_cache.outputs.image_name_tags }}" != "${{ env.IMAGE_REPO }}test_image_name_base:${{ steps.get_tag.outputs.tag_name }} ${{ env.IMAGE_REPO }}test_image_name_runner:${{ steps.get_tag.outputs.tag_name }}" ]; then
+            exit 1
+          fi
+
+      - name: Verify arguments worked
+        run: |
+          # Verify that our docker image does what we meant it to
+          set -x
+          RESULT=$(docker run --rm "${IMAGE_REPO}test_image_name_runner:${{ steps.get_tag.outputs.tag_name }}")
+          if [ "${RESULT}" != "Greetings, Github Actions." ]; then
             exit 1
           fi
 
