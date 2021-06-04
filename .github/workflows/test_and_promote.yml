@@ -43,7 +43,7 @@ jobs:
       - name: Ensure the current dist is the same as the built one
         if: env.ACT != 'true'
         run: |
-          if ! git diff --quiet; then
+          if ! git diff; then
             echo "ERROR: Did you forget to commit something?"
             exit 1
           fi
@@ -51,7 +51,7 @@ jobs:
   test:
     name: "Test"
     runs-on: ubuntu-latest
-    needs: [lint]
+    needs: [lint, test_js]
     steps:
       - uses: actions/checkout@v2
         id: checkout
@@ -77,16 +77,17 @@ jobs:
         id: build_from_cache
         with:
           dockerfile: ./.github/Dockerfile
-          image_prefix: test_image_name_
+          image_prefix: test_image_name
           tag_name: ${{ steps.get_tag.outputs.tag_name }}
           registry: ${{ env.IMAGE_REPO }}
           additional_args: '--build-arg GREETING="Greetings" --build-arg ADDRESSEE="Github Actions"'
           image_targets: "base, runner"
+          separator: "_"
 
       - name: Check Cache Outputs
         run: |
-          set -x
-          if [ "${{ steps.build_from_cache.outputs.image_name_tags }}" != "${{ env.IMAGE_REPO }}test_image_name_base:${{ steps.get_tag.outputs.tag_name }} ${{ env.IMAGE_REPO }}test_image_name_runner:${{ steps.get_tag.outputs.tag_name }}" ]; then
+          EXPECTED="${{ env.IMAGE_REPO }}test_image_name_base:${{ steps.get_tag.outputs.tag_name }} ${{ env.IMAGE_REPO }}test_image_name_runner:${{ steps.get_tag.outputs.tag_name }}"
+          if ! diff <(echo "${{ steps.build_from_cache.outputs.image_name_tags }}") <(echo $EXPECTED); then
             exit 1
           fi
 
@@ -99,6 +100,11 @@ jobs:
             exit 1
           fi
 
+      - name: verify we got the last image tag.
+        run: |
+          docker image inspect "${IMAGE_REPO}test_image_name:${{ steps.get_tag.outputs.tag_name }}"
+
+
       - name: push_tagged_targets
         run: |
           # For this tests purpose we need to add the latest tag too. In the real world this
@@ -110,6 +116,25 @@ jobs:
             docker push "${IMAGE_REPO}test_image_name_${target}:latest"
             docker push "${IMAGE_REPO}test_image_name_${target}:${{ steps.get_tag.outputs.tag_name }}"
           done
+
+      - name: verify a build from cache with no targets.
+        uses: ./docker-build-from-cache
+        id: build_from_cache_no_targets
+        with:
+          dockerfile: ./.github/Dockerfile
+          image_prefix: test_no_targets
+          tag_name: ${{ steps.get_tag.outputs.tag_name }}
+          registry: ${{ env.IMAGE_REPO }}
+          additional_args: '--build-arg GREETING="Greetings" --build-arg ADDRESSEE="Github Actions"'
+          image_targets: ""
+
+
+      - name: Check No target Cache Outputs
+        run: |
+          EXPECTED="${{ env.IMAGE_REPO }}test_no_targets:${{ steps.get_tag.outputs.tag_name }}"
+          if ! diff <(echo "${{ steps.build_from_cache_no_targets.outputs.image_name_tags }}") <(echo $EXPECTED); then
+            exit 1
+          fi
 
       - uses: ./Docker_Image_Cache
         id: nocache

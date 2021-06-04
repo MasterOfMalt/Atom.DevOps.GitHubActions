@@ -18,7 +18,7 @@ Example: _.github/workflows/CI.yml_
         id: build_from_cache
         with:
           dockerfile: ./.github/Dockerfile
-          image_prefix: test_image_name_
+          image_prefix: test_image_name
           tag_name: ${{ steps.get_tag.outputs.tag_name }}
           registry: ${{ env.IMAGE_REPO }}
           image_targets: "base,runner"
@@ -48,10 +48,11 @@ image_prefix: "<prefix of the image tags when built>"
 Optional arguments:
 
 ```yaml
-image_targets: "<comma separated list of targets to build. Defaults to none>"
+image_targets: "<comma separated list of targets to build. Defaults to none - a single stage build>"
 tag_name: "<Tag name to pull and build. Defaults to latest>"
 registry: "<registry path. Defaults to local. must be all lower case and end in '/'>"
 additional_args: '<additional docker command line arguments. Passed exactly to each docker build operation>'
+separator: '<override the default dash beteen prefix and targets>'
 ```
 
 Outputs:

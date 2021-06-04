@@ -28,6 +28,10 @@ inputs:
     description: "Docker additional arguments."
     required: false
     default: ""
+  separator:
+    description: "Separator for prefix and target. Defaults to a dash"
+    required: false
+    default: "-"
 outputs:
   image_name_tags:
     description: "Comma separated list of full image name and tags used for the docker image"
