@@ -100,7 +100,10 @@ jobs:
             exit 1
           fi
 
-      # todo: verify we got the last image tag.
+      - name: verify we got the last image tag.
+        run: |
+          docker image inspect "${IMAGE_REPO}test_image_name:${{ steps.get_tag.outputs.tag_name }}"
+
       # todo: verify a build from cache with no targets.
 
       - name: push_tagged_targets
@@ -114,6 +117,7 @@ jobs:
             docker push "${IMAGE_REPO}test_image_name_${target}:latest"
             docker push "${IMAGE_REPO}test_image_name_${target}:${{ steps.get_tag.outputs.tag_name }}"
           done
+
 
       - uses: ./Docker_Image_Cache
         id: nocache
