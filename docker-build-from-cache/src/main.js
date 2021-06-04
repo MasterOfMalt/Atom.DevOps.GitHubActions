@@ -86,7 +86,7 @@ function process_arguments() {
         image_target_details: image_target_details,
         tag_name: tag_name,
         additional_args: core.getInput("additional_args"),
-        final_tag_name: image_prefix + ":" + tag_name
+        final_tag_name: registry + image_prefix + ":" + tag_name
     }
 }
 

@@ -70,7 +70,7 @@ describe("Process arguments", () => {
        expect(args.tag_name).toEqual("latest");
        expect(args.additional_args).toEqual("--n-t");
        expect(args.image_target_details).toEqual(targets_out);
-       expect(args.final_tag_name).toEqual("test:latest");
+       expect(args.final_tag_name).toEqual("t_r:test:latest");
     }
 
     it("Should split input targets into a list with spaces", ()=> {
