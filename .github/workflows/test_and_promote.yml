@@ -41,7 +41,7 @@ jobs:
           npm run all
 
       - name: Ensure the current dist is the same as the built one
-        if: env.ACT != 'true'
+#        if: env.ACT != 'true'
         run: |
           if ! git diff; then
             echo "ERROR: Did you forget to commit something?"
@@ -51,7 +51,7 @@ jobs:
   test:
     name: "Test"
     runs-on: ubuntu-latest
-    needs: [lint]
+    needs: [lint, test_js]
     steps:
       - uses: actions/checkout@v2
         id: checkout
