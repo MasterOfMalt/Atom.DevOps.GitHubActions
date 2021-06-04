@@ -41,7 +41,7 @@ jobs:
           npm run all
 
       - name: Ensure the current dist is the same as the built one
-#        if: env.ACT != 'true'
+        if: env.ACT != 'true'
         run: |
           if ! git diff; then
             echo "ERROR: Did you forget to commit something?"
@@ -104,7 +104,6 @@ jobs:
         run: |
           docker image inspect "${IMAGE_REPO}test_image_name:${{ steps.get_tag.outputs.tag_name }}"
 
-      # todo: verify a build from cache with no targets.
 
       - name: push_tagged_targets
         run: |
@@ -117,6 +116,25 @@ jobs:
             docker push "${IMAGE_REPO}test_image_name_${target}:latest"
             docker push "${IMAGE_REPO}test_image_name_${target}:${{ steps.get_tag.outputs.tag_name }}"
           done
+
+      - name: verify a build from cache with no targets.
+        uses: ./docker-build-from-cache
+        id: build_from_cache_no_targets
+        with:
+          dockerfile: ./.github/Dockerfile
+          image_prefix: test_no_targets
+          tag_name: ${{ steps.get_tag.outputs.tag_name }}
+          registry: ${{ env.IMAGE_REPO }}
+          additional_args: '--build-arg GREETING="Greetings" --build-arg ADDRESSEE="Github Actions"'
+          image_targets: ""
+
+
+      - name: Check No target Cache Outputs
+        run: |
+          EXPECTED="${{ env.IMAGE_REPO }}test_no_targets:${{ steps.get_tag.outputs.tag_name }}"
+          if ! diff <(echo "${{ steps.build_from_cache_no_targets.outputs.image_name_tags }}") <(echo $EXPECTED); then
+            exit 1
+          fi
 
       - uses: ./Docker_Image_Cache
         id: nocache
