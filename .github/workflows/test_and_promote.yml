@@ -82,11 +82,12 @@ jobs:
           registry: ${{ env.IMAGE_REPO }}
           additional_args: '--build-arg GREETING="Greetings" --build-arg ADDRESSEE="Github Actions"'
           image_targets: "base, runner"
+          separator: "_"
 
       - name: Check Cache Outputs
         run: |
-          set -x
-          if [ "${{ steps.build_from_cache.outputs.image_name_tags }}" != "${{ env.IMAGE_REPO }}test_image_name_base:${{ steps.get_tag.outputs.tag_name }} ${{ env.IMAGE_REPO }}test_image_name_runner:${{ steps.get_tag.outputs.tag_name }}" ]; then
+          EXPECTED="${{ env.IMAGE_REPO }}test_image_name_base:${{ steps.get_tag.outputs.tag_name }} ${{ env.IMAGE_REPO }}test_image_name_runner:${{ steps.get_tag.outputs.tag_name }}"
+          if ! diff <(echo "${{ steps.build_from_cache.outputs.image_name_tags }}") <(echo $EXPECTED); then
             exit 1
           fi
 
