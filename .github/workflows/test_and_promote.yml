@@ -7,8 +7,8 @@ on:
   pull_request:
 
 env:
-  REGISTRY: docker.pkg.github.com
-  IMAGE_REPO: docker.pkg.github.com/masterofmalt/atom.devops.githubactions/
+  REGISTRY: ghcr.io
+  IMAGE_REPO: ghcr.io/masterofmalt/atom.devops.githubactions/
 
 jobs:
   lint:

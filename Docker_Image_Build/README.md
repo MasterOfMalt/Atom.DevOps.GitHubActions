@@ -25,7 +25,7 @@ jobs:
       - name: Login to registry
         uses: docker/login-action@v1
         with:
-          registry: docker.pkg.github.com
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -34,7 +34,7 @@ jobs:
         with:
           image_name: "dash"
           dockerfile: "Dockerfile"
-          registry: docker.pkg.github.com/your_repository_in_lower_case/
+          registry: ghcr.io/your_repository_in_lower_case/
 ```
 
 Mandatory argument:
@@ -48,7 +48,7 @@ Optional input values (and defaults):
 ```yaml
 dockerfile: "Dockerfile"
 tag_name: "tag to use for the docker image"
-registry: "docker.pkg.github.com/your_repository_in_lower_case/"
+registry: "ghcr.io/your_repository_in_lower_case/"
 cache_setting: "Docker Cache setting for use in docker build."
 ```
 
