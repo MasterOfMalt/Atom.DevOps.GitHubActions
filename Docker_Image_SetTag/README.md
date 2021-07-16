@@ -29,7 +29,7 @@ jobs:
       - name: Login to registry
         uses: docker/login-action@v1
         with:
-          registry: docker.pkg.github.com
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -38,7 +38,7 @@ jobs:
         with:
           image_name: test_image_name
           new_tag_name: "<your_new_tag_name>"
-          registry: docker.pkg.github.com/your_repository_in_lower_case/
+          registry: ghcr.io/your_repository_in_lower_case/
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
@@ -53,7 +53,7 @@ github_token: ${{ secrets.GITHUB_TOKEN }}
 Optional input values (and defaults):
 
 ```yaml
-registry: "docker.pkg.github.com/your_repository_in_lower_case/"
+registry: "ghcr.io/your_repository_in_lower_case/"
 ```
 
 ## See it in practice
