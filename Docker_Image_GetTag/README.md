@@ -3,6 +3,8 @@
 GitHub Action implementation for determining the docker image tag from github repo
 properties.
 
+The output of this will be "latest" for a main branch - master, main and devel, or git tag name/git branch name in other cases.
+
 ## Usage
 
 Use with [GitHub Actions](https://github.com/features/actions)
