@@ -29,7 +29,7 @@ runs:
         echo "Docker_Image_SetTag Inputs:"
         echo "---"
         echo "image_name=${{ inputs.image_name }}"
-        echo "new_tag_name=${{ inputs.tag_name }}"
+        echo "new_tag_name=${{ inputs.new_tag_name }}"
         echo "registry=${{ inputs.registry }}"
         echo "github_token=${{ inputs.github_token }}"
         echo "---"
