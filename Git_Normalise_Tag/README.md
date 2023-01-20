@@ -22,7 +22,7 @@ jobs:
     name: "Normalise"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: MasterOfMalt/Atom.DevOps.GitHubActions/Git_Normalise_Tag@v1
         if: env.ACT != 'true'
         with:
