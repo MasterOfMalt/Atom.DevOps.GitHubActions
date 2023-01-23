@@ -48,7 +48,7 @@ runs:
         echo "cache_setting=${{ inputs.cache_setting }}"
         echo "---"
 
-    - run: echo "::set-output name=image_name_tag::${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}"
+    - run: echo "{image_name_tag}={${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}}" >> $GITHUB_OUTPUT
       id: name_tag
       shell: bash
 
@@ -58,4 +58,3 @@ runs:
         docker build . -f "${{ inputs.dockerfile }}" \
           -t "${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}" \
           "${{ inputs.cache_setting }}"
-

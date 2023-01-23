@@ -24,8 +24,8 @@ echo "EXPIRY_TIME_IN_SECS=${EXPIRY_TIME_IN_SECS}"
 echo "---"
 
 function prepare_cache_setting() {
-    ## Caching image layers is good - it saves build time, reduces storage and network usage. 
-    ## However, we don't want to cache forever. For the pip packages that aren't pinned, 
+    ## Caching image layers is good - it saves build time, reduces storage and network usage.
+    ## However, we don't want to cache forever. For the pip packages that aren't pinned,
     ## we want it to fetch fresh ones regularly. Currently that is 3 days.
     ## We avoid pinning unless necessary, so we don't end up dependant on ancient versions or afraid to update.
 
@@ -67,14 +67,14 @@ function main() {
     elif docker pull "${image_name}:latest"; then
         image_full_name="${image_name}:latest"
     else
-        echo "::set-output name=setting::--no-cache"
+        echo "setting=--no-cache" >> $GITHUB_OUTPUT
         return
     fi
 
     if prepare_cache_setting "${image_full_name}"; then
-        echo "::set-output name=setting::--cache-from=${image_full_name}"
+        echo "setting=--cache-from=${image_full_name}" >> $GITHUB_OUTPUT
     else
-        echo "::set-output name=setting::--no-cache"
+        echo "setting=--no-cache" >> $GITHUB_OUTPUT
     fi
 }
 

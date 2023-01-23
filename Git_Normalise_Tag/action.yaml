@@ -46,10 +46,10 @@ runs:
         DOT_COUNT=$(echo ${PREV_TAG} | tr -cd '.' | wc -c)
         case $DOT_COUNT in
           0)
-            echo "::set-output name=new_tag::${PREV_TAG}.0.0"
+            echo "new_tag=${PREV_TAG}.0.0" >> $GITHUB_OUTPUT
             ;;
           1)
-            echo "::set-output name=new_tag::${PREV_TAG}.0"
+            echo "new_tag=${PREV_TAG}.0" >> $GITHUB_OUTPUT
             ;;
           *)
             echo "Can't normalise this tag"
@@ -63,4 +63,3 @@ runs:
           git tag -a ${{ steps.normalise_tag.outputs.new_tag }} -m "Normalised to semantic-version format"
           git push origin --tags
         fi
-

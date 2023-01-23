@@ -13,7 +13,6 @@ if [ "$REF" == 'refs/heads/master' ] || [ "$REF" == 'refs/heads/main' ] || [ "$R
 else
   tag_name="$(basename "$REF")"
 fi
-echo "::set-output name=tag_name::${tag_name}"
 echo "###################################"
 echo "Docker_Image_GetTag Output:"
 echo "---"
