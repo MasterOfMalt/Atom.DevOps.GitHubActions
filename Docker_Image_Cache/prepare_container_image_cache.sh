@@ -67,14 +67,14 @@ function main() {
     elif docker pull "${image_name}:latest"; then
         image_full_name="${image_name}:latest"
     else
-        echo "setting=--no-cache" >> $GITHUB_OUTPUT
+        echo "setting=--no-cache" >> "$GITHUB_OUTPUT"
         return
     fi
 
     if prepare_cache_setting "${image_full_name}"; then
-        echo "setting=--cache-from=${image_full_name}" >> $GITHUB_OUTPUT
+        echo "setting=--cache-from=${image_full_name}" >> "$GITHUB_OUTPUT"
     else
-        echo "setting=--no-cache" >> $GITHUB_OUTPUT
+        echo "setting=--no-cache" >> "$GITHUB_OUTPUT"
     fi
 }
 

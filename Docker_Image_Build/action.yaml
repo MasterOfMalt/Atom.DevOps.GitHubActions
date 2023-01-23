@@ -48,7 +48,7 @@ runs:
         echo "cache_setting=${{ inputs.cache_setting }}"
         echo "---"
 
-    - run: echo "{image_name_tag}={${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}}" >> $GITHUB_OUTPUT
+    - run: echo "{image_name_tag}={${{ inputs.registry }}${{ inputs.image_name }}:${{ inputs.tag_name }}}" >> "$GITHUB_OUTPUT"
       id: name_tag
       shell: bash
 

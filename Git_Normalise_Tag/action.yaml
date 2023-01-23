@@ -46,10 +46,10 @@ runs:
         DOT_COUNT=$(echo ${PREV_TAG} | tr -cd '.' | wc -c)
         case $DOT_COUNT in
           0)
-            echo "new_tag=${PREV_TAG}.0.0" >> $GITHUB_OUTPUT
+            echo "new_tag=${PREV_TAG}.0.0" >> "$GITHUB_OUTPUT"
             ;;
           1)
-            echo "new_tag=${PREV_TAG}.0" >> $GITHUB_OUTPUT
+            echo "new_tag=${PREV_TAG}.0" >> "$GITHUB_OUTPUT"
             ;;
           *)
             echo "Can't normalise this tag"
