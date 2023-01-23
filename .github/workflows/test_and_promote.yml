@@ -247,7 +247,7 @@ jobs:
       - name: Bump version and push tag
         if: env.ACT != 'true'
         id: version_bump
-        uses: mathieudutour/github-tag-action@v5.3
+        uses: mathieudutour/github-tag-action@v6.1
         with:
           release_branches: master,main,devel
           tag_prefix: ''
