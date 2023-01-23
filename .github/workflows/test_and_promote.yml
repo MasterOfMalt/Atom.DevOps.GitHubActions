@@ -231,7 +231,7 @@ jobs:
       - name: Merge to master
         id: merge
         if: env.ACT != 'true'
-        uses: devmasx/merge-branch@v1.3.1
+        uses: devmasx/merge-branch@1.4.0
         with:
           type: now
           from_branch: devel
