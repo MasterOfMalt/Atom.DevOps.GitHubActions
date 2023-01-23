@@ -13,6 +13,7 @@ if [ "$REF" == 'refs/heads/master' ] || [ "$REF" == 'refs/heads/main' ] || [ "$R
 else
   tag_name="$(basename "$REF")"
 fi
+echo "tag_name=${tag_name}" >> "$GITHUB_OUTPUT"
 echo "###################################"
 echo "Docker_Image_GetTag Output:"
 echo "---"
